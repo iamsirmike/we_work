@@ -32,9 +32,9 @@ class _HomeState extends State<Home> {
                     Row(
                       children: [
                         GestureDetector(
-                          onTap: () async{
-                           var loggedIn =  await auth.getcurrentUser();
-                           print(loggedIn.uid);
+                          onTap: () async {
+                            var loggedIn = await auth.getcurrentUser();
+                            print(loggedIn.uid);
                           },
                           child: Text(
                             'New Jobs',
@@ -105,6 +105,7 @@ class _HomeState extends State<Home> {
                                 stream: _firestore
                                     .collection('jobs')
                                     .where('status', isEqualTo: 'open')
+                                    // .orderBy('timestamp', descending: true)
                                     .limit(10)
                                     .snapshots(),
                                 builder: (context, snapshot) {

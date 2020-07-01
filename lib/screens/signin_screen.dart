@@ -28,12 +28,32 @@ class _SignInState extends State<SignIn> {
     });
     try {
       await auth.signinwithemail(_email, _pass);
-    } catch (error) {
-      var errorMessage = error.message.toString();
-      print(errorMessage);
       setState(() {
         _loading = false;
       });
+    } catch (error) {
+      var errorMessage = error.message.toString();
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text('Sign in failed'),
+              content: Text(
+                'User does not exist, make sure you have typed the correct email and password',
+              ),
+              actions: [
+                FlatButton(
+                    onPressed: () {
+                      setState(() {
+                        _loading = false;
+                      });
+                      Navigator.pop(context);
+                    },
+                    child: Text('OK'))
+              ],
+            );
+          });
+      print(errorMessage);
     }
   }
 
@@ -113,9 +133,12 @@ class _SignInState extends State<SignIn> {
                       SizedBox(
                         height: screenHeight(context, 0.03),
                       ),
-                      Container(
-                        alignment: Alignment.bottomRight,
-                        child: Text('Forgot password?'),
+                      GestureDetector(
+                        onTap: () => Navigator.pushNamed(context, '/reset'),
+                        child: Container(
+                          alignment: Alignment.bottomRight,
+                          child: Text('Forgot password?'),
+                        ),
                       ),
                       SizedBox(
                         height: screenHeight(context, 0.05),

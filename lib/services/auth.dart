@@ -36,9 +36,24 @@ class Auth {
     return _userFromFirebase(authResult.user);
   }
 
+  // Future<User> signupwithemail(email, pass) async {
+  //   final authResult = await FirebaseAuth.instance
+  //       .createUserWithEmailAndPassword(email: email, password: pass);
+  //   authResult.user.sendEmailVerification();
+  //   return _userFromFirebase(authResult.user);
+  // }
+
+  // Future<User> signinwithemail(email, pass) async {
+  //   final authResult =
+  //       await _auth.signInWithEmailAndPassword(email: email, password: pass);
+  //   if (authResult.user.isEmailVerified)
+  //     return _userFromFirebase(authResult.user);
+  //   return null;
+  // }
+
   Future<User> signupwithemail(email, pass) async {
-    final authResult = await _auth.createUserWithEmailAndPassword(
-        email: email, password: pass);
+    final authResult = await FirebaseAuth.instance
+        .createUserWithEmailAndPassword(email: email, password: pass);
     return _userFromFirebase(authResult.user);
   }
 
@@ -46,6 +61,10 @@ class Auth {
     final authResult =
         await _auth.signInWithEmailAndPassword(email: email, password: pass);
     return _userFromFirebase(authResult.user);
+  }
+
+  Future<void> resetPassword(String email) async {
+    await _auth.sendPasswordResetEmail(email: email);
   }
 
   //sig in with google

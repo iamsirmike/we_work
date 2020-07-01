@@ -29,19 +29,36 @@ class _SignUpState extends State<SignUp> {
         _loading = true;
       });
       try {
-        var newUser =await auth.signupwithemail(_email, _pass);
+        var newUser = await auth.signupwithemail(_email, _pass);
         if (newUser != null) {
-          Navigator.pop(context);
+          Navigator.pushNamed(context, '/signin');
           _emailcontroller.clear();
           _passwordcontroller.clear();
         }
-
         setState(() {
           _loading = false;
         });
-      } catch (e) {
-        var errorMessage = e.message.toString();
-        print(errorMessage);
+      } catch (error) {
+        var errorMessage = error.message.toString();
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text('Sign up failed'),
+              content: Text(errorMessage),
+              actions: [
+                FlatButton(
+                    onPressed: () {
+                      setState(() {
+                        _loading = false;
+                      });
+                      Navigator.pop(context);
+                    },
+                    child: Text('OK'))
+              ],
+            );
+          },
+        );
       }
     }
   }
@@ -122,10 +139,6 @@ class _SignUpState extends State<SignUp> {
                       SizedBox(
                         height: screenHeight(context, 0.03),
                       ),
-                      // Container(
-                      //   alignment: Alignment.bottomRight,
-                      //   child: Text('Forgot password?'),
-                      // ),
                       SizedBox(
                         height: screenHeight(context, 0.02),
                       ),
