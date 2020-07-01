@@ -28,15 +28,21 @@ class _SignUpState extends State<SignUp> {
       setState(() {
         _loading = true;
       });
-    }
-    try {
-      await auth.signupwithemail(_email, _pass);
-      setState(() {
-        _loading = false;
-      });
-    } catch (e) {
-     var errorMessage = e.message.toString();
-     print(errorMessage);
+      try {
+        var newUser =await auth.signupwithemail(_email, _pass);
+        if (newUser != null) {
+          Navigator.pop(context);
+          _emailcontroller.clear();
+          _passwordcontroller.clear();
+        }
+
+        setState(() {
+          _loading = false;
+        });
+      } catch (e) {
+        var errorMessage = e.message.toString();
+        print(errorMessage);
+      }
     }
   }
 

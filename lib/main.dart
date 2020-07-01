@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:we_work/screens/all_jobs.dart';
+import 'package:we_work/screens/signin_screen.dart';
 import 'package:we_work/screens/signup_screen.dart';
 import 'package:we_work/screens/wrapper.dart';
 
@@ -22,6 +23,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/signup': (context) => SignUp(),
         '/alljobs': (context) => AllJobs(),
+        '/signin': (context) => SignIn(),
       },
     );
   }

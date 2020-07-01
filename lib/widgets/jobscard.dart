@@ -189,11 +189,17 @@ class JobCard extends StatelessWidget {
                           child: Text(
                             'Description',
                             style: TextStyle(
-                                fontSize: 17.0, fontWeight: FontWeight.w500),
+                              fontSize: 17.0,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey[600],
+                            ),
                           ),
                         ),
                         Container(
-                          child: Text(description),
+                          child: Text(
+                            description,
+                            style: TextStyle(color: Colors.grey[400]),
+                          ),
                         ),
                         Container(
                           width: screenWidth(context, 1),
