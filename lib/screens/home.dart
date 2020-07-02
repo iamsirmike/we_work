@@ -100,7 +100,7 @@ class _HomeState extends State<Home> {
                           ),
                           Expanded(
                             child: Container(
-                              height: screenHeight(context, 0.8),
+                              height: screenHeight(context, 1),
                               child: StreamBuilder<QuerySnapshot>(
                                 stream: _firestore
                                     .collection('jobs')
