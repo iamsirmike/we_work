@@ -13,6 +13,7 @@ class SignIn extends StatefulWidget {
 
 class _SignInState extends State<SignIn> {
   final _formKey = GlobalKey<FormState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   bool _loading = false;
   final Auth auth = Auth();
@@ -22,44 +23,40 @@ class _SignInState extends State<SignIn> {
   String get _email => _emailcontroller.text;
   String get _pass => _passwordcontroller.text;
 
+  Widget snackBar(message) => SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+      );
+
   Future<void> signIn() async {
+    print("HELLO");
     setState(() {
       _loading = true;
     });
-    try {
-      await auth.signinwithemail(_email, _pass);
+    dynamic user = await auth.signinwithemail(_email, _pass);
+
+    if (user.runtimeType != User) {
+      print(user);
       setState(() {
         _loading = false;
+        switch (user) {
+          case "ERROR_USER_NOT_FOUND":
+          case "ERROR_WRONG_PASSWORD":
+            _scaffoldKey.currentState
+                .showSnackBar(snackBar("Email or password is incorrect"));
+            break;
+          default:
+            _scaffoldKey.currentState.showSnackBar(
+                snackBar("An unknown error occured, please try again"));
+        }
       });
-    } catch (error) {
-      var errorMessage = error.message.toString();
-      showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: Text('Sign in failed'),
-              content: Text(
-                'User does not exist, make sure you have typed the correct email and password',
-              ),
-              actions: [
-                FlatButton(
-                    onPressed: () {
-                      setState(() {
-                        _loading = false;
-                      });
-                      Navigator.pop(context);
-                    },
-                    child: Text('OK'))
-              ],
-            );
-          });
-      print(errorMessage);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       body: ModalProgressHUD(
         inAsyncCall: _loading,
         child: SafeArea(
