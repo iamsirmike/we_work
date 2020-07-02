@@ -22,10 +22,10 @@ class _AllJobsState extends State<AllJobs> {
       backgroundColor: UiColors.color1,
       body: ModalProgressHUD(
         inAsyncCall: _loading,
-        child: ListView(
-          children: [
-            SafeArea(
-              child: Padding(
+        child: SafeArea(
+          child: ListView(
+            children: [
+              Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Column(
                   children: [
@@ -119,6 +119,7 @@ class _AllJobsState extends State<AllJobs> {
                                     jobslistWidget.add(jobWidget);
                                   }
                                   return ListView(
+                                    shrinkWrap: true,
                                     physics: NeverScrollableScrollPhysics(),
                                     children: jobslistWidget,
                                   );
@@ -136,8 +137,8 @@ class _AllJobsState extends State<AllJobs> {
                   ],
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

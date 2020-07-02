@@ -4,6 +4,7 @@ import 'package:we_work/screens/resetpassword..dart';
 import 'package:we_work/screens/signin_screen.dart';
 import 'package:we_work/screens/signup_screen.dart';
 import 'package:we_work/screens/wrapper.dart';
+import 'package:we_work/utils/colors.dart';
 
 void main() {
   runApp(MyApp());
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.grey,
         visualDensity: VisualDensity.adaptivePlatformDensity,
+        appBarTheme: AppBarTheme(color: UiColors.bg),
       ),
       home: Wrapper(),
       routes: {

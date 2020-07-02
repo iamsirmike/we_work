@@ -30,7 +30,7 @@ class JobCard extends StatelessWidget {
           width: screenWidth(context, 1),
           color: UiColors.bg,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            padding: const EdgeInsets.symmetric(horizontal: 3.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -91,6 +91,7 @@ class JobCard extends StatelessWidget {
                       SizedBox(height: 6),
                       Text(
                         '\$$salary',
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(color: Colors.grey[400]),
                       ),
                     ],

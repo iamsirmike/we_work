@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:we_work/screens/all_jobs.dart';
 import 'package:we_work/screens/home.dart';
+import 'package:we_work/screens/profile.dart';
 import 'package:we_work/utils/colors.dart';
 
 class Dashboard extends StatefulWidget {
@@ -22,7 +22,7 @@ class _DashboardState extends State<Dashboard> {
     Home(),
     Home(),
     Home(),
-    Home(),
+    Profile(),
   ];
 
   @override
