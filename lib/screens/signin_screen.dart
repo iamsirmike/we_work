@@ -29,27 +29,30 @@ class _SignInState extends State<SignIn> {
       );
 
   Future<void> signIn() async {
-    print("HELLO");
-    setState(() {
-      _loading = true;
-    });
-    dynamic user = await auth.signinwithemail(_email, _pass);
+    if (_formKey.currentState.validate()) {
+      _formKey.currentState.save();
 
-    if (user.runtimeType != User) {
-      print(user);
       setState(() {
-        _loading = false;
-        switch (user) {
-          case "ERROR_USER_NOT_FOUND":
-          case "ERROR_WRONG_PASSWORD":
-            _scaffoldKey.currentState
-                .showSnackBar(snackBar("Email or password is incorrect"));
-            break;
-          default:
-            _scaffoldKey.currentState.showSnackBar(
-                snackBar("An unknown error occured, please try again"));
-        }
+        _loading = true;
       });
+      dynamic user = await auth.signinwithemail(_email, _pass);
+
+      if (user.runtimeType != User) {
+        print(user);
+        setState(() {
+          _loading = false;
+          switch (user) {
+            case "ERROR_USER_NOT_FOUND":
+            case "ERROR_WRONG_PASSWORD":
+              _scaffoldKey.currentState
+                  .showSnackBar(snackBar("Email or password is incorrect"));
+              break;
+            default:
+              _scaffoldKey.currentState.showSnackBar(
+                  snackBar("An unknown error occured, please try again"));
+          }
+        });
+      }
     }
   }
 
@@ -114,7 +117,7 @@ class _SignInState extends State<SignIn> {
                           controller: _passwordcontroller,
                           validator: (_pass) {
                             if ((_pass.isEmpty) || !(_pass.length > 6)) {
-                              return 'Password must be more than 6';
+                              return 'Password must be more than 6 characters';
                             }
                             return null;
                           },

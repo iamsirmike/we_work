@@ -14,6 +14,7 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends State<SignUp> {
   final _formKey = GlobalKey<FormState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   bool _loading = false;
   final Auth auth = Auth(); /*  */
@@ -23,42 +24,34 @@ class _SignUpState extends State<SignUp> {
   String get _email => _emailcontroller.text;
   String get _pass => _passwordcontroller.text;
 
+  Widget snackBar(message) => SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+      );
+
   Future<void> signIn() async {
     if (_formKey.currentState.validate()) {
+      _formKey.currentState.save();
+
       setState(() {
         _loading = true;
       });
-      try {
-        await auth.signupwithemail(_email, _pass);
-        // if (newUser != null) {
-        //   Navigator.pushNamed(context, '/signin');
-        //   _emailcontroller.clear();
-        //   _passwordcontroller.clear();
-        // }
+      dynamic user = await auth.signupwithemail(_email, _pass);
+      print(user);
+      if (user.runtimeType != User) {
+        // print(user);
         setState(() {
           _loading = false;
+          switch (user) {
+            case "ERROR_EMAIL_ALREADY_IN_USE":
+              _scaffoldKey.currentState
+                  .showSnackBar(snackBar("User already exists"));
+              break;
+            default:
+              _scaffoldKey.currentState.showSnackBar(
+                  snackBar("An unknown error occured, please try again"));
+          }
         });
-      } catch (error) {
-        var errorMessage = error.message.toString();
-        showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: Text('Sign up failed'),
-              content: Text(errorMessage),
-              actions: [
-                FlatButton(
-                    onPressed: () {
-                      setState(() {
-                        _loading = false;
-                      });
-                      Navigator.pop(context);
-                    },
-                    child: Text('OK'))
-              ],
-            );
-          },
-        );
       }
     }
   }
@@ -66,6 +59,7 @@ class _SignUpState extends State<SignUp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       body: ModalProgressHUD(
         inAsyncCall: _loading,
         child: SafeArea(
