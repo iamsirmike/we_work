@@ -22,10 +22,10 @@ class _AllJobsState extends State<AllJobs> {
       backgroundColor: UiColors.color1,
       body: ModalProgressHUD(
         inAsyncCall: _loading,
-        child: ListView(
-          children: [
-            SafeArea(
-              child: Padding(
+        child: SafeArea(
+          child: ListView(
+            children: [
+              Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Column(
                   children: [
@@ -78,48 +78,53 @@ class _AllJobsState extends State<AllJobs> {
                           //       fontSize: 20.0),
                           // ),
                           // Spacer(),
-                          Container(
-                            height: screenHeight(context, 1),
-                            child: StreamBuilder<QuerySnapshot>(
-                              stream: _firestore.collection('jobs').snapshots(),
-                              builder: (context, snapshot) {
-                                if (!snapshot.hasData) {
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 120.0),
-                                    child: Container(
-                                      child: Center(
-                                        child: CircularProgressIndicator(
-                                            backgroundColor: Colors.lightBlue),
+                          Expanded(
+                            child: Container(
+                              height: screenHeight(context, 0.9),
+                              child: StreamBuilder<QuerySnapshot>(
+                                stream:
+                                    _firestore.collection('jobs').snapshots(),
+                                builder: (context, snapshot) {
+                                  if (!snapshot.hasData) {
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 120.0),
+                                      child: Container(
+                                        child: Center(
+                                          child: CircularProgressIndicator(
+                                              backgroundColor:
+                                                  Colors.lightBlue),
+                                        ),
                                       ),
-                                    ),
-                                  );
-                                }
-                                final jobData = snapshot.data.documents;
-                                List<JobCard> jobslistWidget = [];
-                                for (var job in jobData) {
-                                  final title = job.data['title'];
-                                  final location = job.data['location'];
-                                  final options = job.data['options'];
-                                  final salary = job.data['salary'];
-                                  final status = job.data['status'];
-                                  final description = job.data['description'];
+                                    );
+                                  }
+                                  final jobData = snapshot.data.documents;
+                                  List<JobCard> jobslistWidget = [];
+                                  for (var job in jobData) {
+                                    final title = job.data['title'];
+                                    final location = job.data['location'];
+                                    final options = job.data['options'];
+                                    final salary = job.data['salary'];
+                                    final status = job.data['status'];
+                                    final description = job.data['description'];
 
-                                  final jobWidget = JobCard(
-                                    title: title,
-                                    location: location,
-                                    options: options,
-                                    salary: salary,
-                                    status: status,
-                                    description: description,
+                                    final jobWidget = JobCard(
+                                      title: title,
+                                      location: location,
+                                      options: options,
+                                      salary: salary,
+                                      status: status,
+                                      description: description,
+                                    );
+                                    jobslistWidget.add(jobWidget);
+                                  }
+                                  return ListView(
+                                    shrinkWrap: true,
+                                    physics: NeverScrollableScrollPhysics(),
+                                    children: jobslistWidget,
                                   );
-                                  jobslistWidget.add(jobWidget);
-                                }
-                                return ListView(
-                                  physics: NeverScrollableScrollPhysics(),
-                                  children: jobslistWidget,
-                                );
-                              },
+                                },
+                              ),
                             ),
                           )
                           // ...jobData
@@ -132,8 +137,8 @@ class _AllJobsState extends State<AllJobs> {
                   ],
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
