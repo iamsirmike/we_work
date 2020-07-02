@@ -23,7 +23,6 @@ class _DashboardState extends State<Dashboard> {
     Home(),
     Home(),
     Home(),
-    AllJobs(),
   ];
 
   @override
