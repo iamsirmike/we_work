@@ -57,7 +57,9 @@ class Auth {
     return _userFromFirebase(authResult.user);
   }
 
-// Made some few changes here, i need the error code to display appropriate message in the snackbar
+/* Made some few changes here
+  Returns dynamic so that i can return the firebase exceptions if any is thrown
+ */
   Future<dynamic> signinwithemail(email, pass) async {
     try {
       final authResult = await _auth
