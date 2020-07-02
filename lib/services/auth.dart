@@ -51,10 +51,16 @@ class Auth {
   //   return null;
   // }
 
-  Future<User> signupwithemail(email, pass) async {
-    final authResult = await FirebaseAuth.instance
-        .createUserWithEmailAndPassword(email: email, password: pass);
-    return _userFromFirebase(authResult.user);
+  Future<dynamic> signupwithemail(email, pass) async {
+    try {
+      final authResult = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: pass)
+          .then((value) => _userFromFirebase(value.user))
+          .catchError((onError) => throw new PlatformException(
+              code: onError.code, message: onError.message));
+    } on PlatformException catch (e) {
+      return e.code;
+    }
   }
 
 /* Made some few changes here
