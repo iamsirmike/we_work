@@ -9,7 +9,7 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  int currentIndex = 0;
+  int currentIndex = 3;
 
   final bottomItems = [
     {'icon': Icon(Icons.home), "text": "Jobs"},
