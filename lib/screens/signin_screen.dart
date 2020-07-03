@@ -16,6 +16,7 @@ class _SignInState extends State<SignIn> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   bool _loading = false;
+  bool _isPasswordMasked = true;
   final Auth auth = Auth();
   final TextEditingController _emailcontroller = TextEditingController();
   final TextEditingController _passwordcontroller = TextEditingController();
@@ -35,7 +36,9 @@ class _SignInState extends State<SignIn> {
       setState(() {
         _loading = true;
       });
-      dynamic user = await auth.signinwithemail(_email, _pass);
+      print(_email);
+      print(_pass);
+      dynamic user = await auth.signinwithemail(_email.trim(), _pass.trim());
 
       if (user.runtimeType != User) {
         print(user);
@@ -121,13 +124,24 @@ class _SignInState extends State<SignIn> {
                             }
                             return null;
                           },
-                          obscureText: true,
+                          obscureText: _isPasswordMasked,
                           keyboardType: TextInputType.emailAddress,
                           style: TextStyle(color: Colors.grey[500]),
                           decoration: textInputDecoration(
-                            labelText: 'Password',
-                            sicon: Icon(Icons.remove_red_eye),
-                          ),
+                              labelText: 'Password',
+                              sicon: IconButton(
+                                  icon: Icon(
+                                    _isPasswordMasked
+                                        ? Icons.visibility
+                                        : Icons.visibility_off,
+                                    color: Colors.black38,
+                                    size: 23.0,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _isPasswordMasked = !_isPasswordMasked;
+                                    });
+                                  })),
                         ),
                       ),
                       SizedBox(
