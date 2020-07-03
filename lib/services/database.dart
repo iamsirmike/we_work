@@ -5,7 +5,7 @@ final _firestore = Firestore.instance;
 class Queries {
   Future<void> saveprofile(
       _name, _email, _phone, _experience, _githublink, _resume) async {
-    await _firestore.collection('profile').add({
+    var result = await _firestore.collection('profile').add({
       'name': _name,
       'email': _email,
       'phone': _phone,
@@ -13,5 +13,6 @@ class Queries {
       'githublink': _githublink,
       'resume': _resume,
     });
+    return result;
   }
 }
