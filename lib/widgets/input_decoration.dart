@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:we_work/utils/colors.dart';
 
-InputDecoration textInputDecoration({Icon sicon, String labelText, String hintText}) {
+InputDecoration textInputDecoration(
+    {IconButton sicon, String labelText, String hintText}) {
   return InputDecoration(
     labelText: labelText,
     hintText: hintText,
     labelStyle: TextStyle(color: Colors.grey[500]),
-     hintStyle: TextStyle(color: Colors.grey[500]),
+    hintStyle: TextStyle(color: Colors.grey[500]),
     suffixIcon: sicon,
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.all(Radius.circular(10)),
