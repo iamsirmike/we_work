@@ -31,16 +31,10 @@ class _HomeState extends State<Home> {
                   children: [
                     Row(
                       children: [
-                        GestureDetector(
-                          onTap: () async {
-                            var loggedIn = await auth.getcurrentUser();
-                            print(loggedIn.uid);
-                          },
-                          child: Text(
-                            'New Jobs',
-                            style: TextStyle(
-                                fontSize: 25.0, fontWeight: FontWeight.w400),
-                          ),
+                        Text(
+                          'New Jobs',
+                          style: TextStyle(
+                              fontSize: 25.0, fontWeight: FontWeight.w400),
                         ),
                         Spacer(),
                         GestureDetector(

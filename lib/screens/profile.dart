@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:we_work/services/auth.dart';
 import 'package:we_work/services/database.dart';
 import 'package:we_work/utils/colors.dart';
 import 'package:we_work/utils/responsive.dart';
@@ -16,13 +17,15 @@ class _ProfileState extends State<Profile> {
   final _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   Queries queries = Queries();
+  Auth auth = Auth();
   bool _loading = false;
   TextEditingController _name = TextEditingController();
   TextEditingController _email = TextEditingController();
   TextEditingController _phone = TextEditingController();
   TextEditingController _github = TextEditingController();
-  // TextEditingController _experience = TextEditingController();
   TextEditingController _resume = TextEditingController();
+  var _uid;
+  String _applications;
 
   // <-- drop downmenu for experience -->
   String _selectedexperience = 'Senior';
@@ -36,6 +39,16 @@ class _ProfileState extends State<Profile> {
     return dropdownItems;
   }
 
+  //get current user
+  Future<void> getCurrentUser() async {
+    setState(() async {
+      var loggedInUser = await auth.getcurrentUser();
+      _uid = loggedInUser.uid;
+      print(_uid);
+    });
+  }
+
+//save profile data
   Future<void> _save() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
@@ -43,8 +56,8 @@ class _ProfileState extends State<Profile> {
         _loading = true;
       });
       try {
-        await queries.saveprofile(_name.text, _email.text, _phone.text,
-            _selectedexperience, _github.text, _resume.text);
+        await queries.saveprofile(_uid, _name.text, _email.text, _phone.text,
+            _selectedexperience, _github.text, _resume.text, _applications);
         setState(() {
           _loading = false;
         });
@@ -54,7 +67,18 @@ class _ProfileState extends State<Profile> {
     }
   }
 
-// <! ----- end drop down -->
+//logout
+  Future<void> _logout() async {
+    await auth.signOut();
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getCurrentUser();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,6 +88,14 @@ class _ProfileState extends State<Profile> {
         title: Text(
           'Create profile',
         ),
+        actions: [
+          IconButton(
+              icon: Icon(
+                Icons.power_settings_new,
+                color: Colors.red,
+              ),
+              onPressed: _logout)
+        ],
       ),
       body: SafeArea(
         child: ModalProgressHUD(
