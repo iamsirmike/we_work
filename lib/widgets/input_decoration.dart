@@ -12,8 +12,8 @@ InputDecoration textInputDecoration(
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.all(Radius.circular(10)),
       borderSide: BorderSide(
-        width: 1,
-        color: UiColors.bg,
+        width: 0.3,
+        color: UiColors.color5,
       ),
     ),
     focusedBorder: OutlineInputBorder(

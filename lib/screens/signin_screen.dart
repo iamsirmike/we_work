@@ -63,6 +63,7 @@ class _SignInState extends State<SignIn> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
+      backgroundColor: UiColors.bg,
       body: ModalProgressHUD(
         inAsyncCall: _loading,
         child: SafeArea(
@@ -70,7 +71,7 @@ class _SignInState extends State<SignIn> {
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 20.0, vertical: 70.0),
+                    horizontal: 20.0, vertical: 60.0),
                 child: Form(
                   key: _formKey,
                   child: Column(
@@ -160,38 +161,55 @@ class _SignInState extends State<SignIn> {
                       Container(
                         width: screenWidth(context, 1),
                         height: screenHeight(context, 0.1),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: UiColors.color2, width: 2),
+                        ),
                         child: RaisedButton(
                           onPressed: signIn,
-                          child: Text('Sign In'),
-                          color: UiColors.color2,
+                          child: Text(
+                            'Sign In',
+                            style: TextStyle(
+                              color: UiColors.color2,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          color: UiColors.bg,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(10),
                           ),
                         ),
                       ),
                       SizedBox(
-                        height: screenHeight(context, 0.08),
+                        height: screenHeight(context, 0.02),
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.pushNamed(context, '/signup');
-                        },
-                        child: RichText(
-                          text: TextSpan(
-                            text: 'Dont have an account? ',
-                            style: TextStyle(color: Colors.grey[400]),
-                            children: <TextSpan>[
-                              TextSpan(
-                                text: 'Sign up',
-                                style: TextStyle(
-                                    color: UiColors.color3,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 17.0),
-                              ),
-                            ],
+                      Text(
+                        'OR',
+                        style: TextStyle(color: UiColors.color5),
+                      ),
+                      SizedBox(
+                        height: screenHeight(context, 0.02),
+                      ),
+                      Container(
+                        width: screenWidth(context, 1),
+                        height: screenHeight(context, 0.1),
+                        child: RaisedButton(
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/signup');
+                          },
+                          child: Text(
+                            'Create account',
+                            style: TextStyle(
+                              color: UiColors.color1,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          color: UiColors.color2,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
                           ),
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),

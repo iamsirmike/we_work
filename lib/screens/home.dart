@@ -19,7 +19,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: UiColors.color1,
+      backgroundColor: UiColors.bg,
       body: ModalProgressHUD(
         inAsyncCall: _loading,
         child: ListView(
@@ -31,10 +31,10 @@ class _HomeState extends State<Home> {
                   children: [
                     Row(
                       children: [
-                        Text(
-                          'New Jobs',
-                          style: TextStyle(
-                              fontSize: 25.0, fontWeight: FontWeight.w400),
+                        Icon(
+                          Icons.sort,
+                          size: 25.0,
+                          color: UiColors.color2,
                         ),
                         Spacer(),
                         GestureDetector(
@@ -42,8 +42,9 @@ class _HomeState extends State<Home> {
                             auth.signOut();
                           },
                           child: Icon(
-                            Icons.notifications,
-                            color: Colors.grey[500],
+                            Icons.notifications_none,
+                            size: 25.0,
+                            color: UiColors.color2,
                           ),
                         ),
                       ],
@@ -56,16 +57,21 @@ class _HomeState extends State<Home> {
                       child: ListView(
                         children: [
                           Container(
-                            height: screenHeight(context, 0.07),
+                            height: screenHeight(context, 0.09),
                             decoration: BoxDecoration(
-                              color: UiColors.bg,
+                              color: UiColors.color1,
                               borderRadius: BorderRadius.circular(
-                                10,
+                                25,
                               ),
                             ),
                             child: TextField(
-                              decoration:
-                                  textInputDecoration(hintText: 'Search jobs'),
+                              decoration: textInputDecoration(
+                                hintText: 'Search jobs',
+                                sicon: IconButton(
+                                  icon: Icon(Icons.search),
+                                  onPressed: () {},
+                                ),
+                              ),
                             ),
                           ),
                           SizedBox(
@@ -74,9 +80,10 @@ class _HomeState extends State<Home> {
                           Row(
                             children: [
                               Text(
-                                'Latest Roles',
+                                'Recent jobs',
                                 style: TextStyle(
-                                    fontWeight: FontWeight.bold,
+                                    color: UiColors.color2,
+                                    fontWeight: FontWeight.w500,
                                     fontSize: 20.0),
                               ),
                               Spacer(),
@@ -87,7 +94,9 @@ class _HomeState extends State<Home> {
                                 child: Text(
                                   'View All',
                                   style: TextStyle(
-                                      fontSize: 15.0, color: Colors.grey[500]),
+                                    fontSize: 15.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             ],
@@ -119,17 +128,21 @@ class _HomeState extends State<Home> {
                                   final jobData = snapshot.data.documents;
                                   List<JobCard> jobslistWidget = [];
                                   for (var job in jobData) {
+                                    final company = job.data['company'];
                                     final title = job.data['title'];
                                     final location = job.data['location'];
+                                    final type = job.data['type'];
                                     final options = job.data['options'];
                                     final salary = job.data['salary'];
                                     final status = job.data['status'];
                                     final description = job.data['description'];
 
                                     final jobWidget = JobCard(
+                                      company: company,
                                       title: title,
                                       location: location,
                                       options: options,
+                                      type: type,
                                       salary: salary,
                                       status: status,
                                       description: description,
