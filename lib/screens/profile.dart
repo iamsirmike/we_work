@@ -74,7 +74,6 @@ class _ProfileState extends State<Profile> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getCurrentUser();
   }
@@ -240,10 +239,15 @@ class _ProfileState extends State<Profile> {
                         height: screenHeight(context, 0.1),
                         child: RaisedButton(
                           onPressed: _save,
-                          child: Text('Save'),
+                          child: Text(
+                            'Save',
+                            style: TextStyle(
+                                color: UiColors.color1,
+                                fontWeight: FontWeight.bold),
+                          ),
                           color: UiColors.color2,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(10),
                           ),
                         ),
                       ),
@@ -266,6 +270,6 @@ class TextboxSeperator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(height: 7);
+    return SizedBox(height: 10);
   }
 }

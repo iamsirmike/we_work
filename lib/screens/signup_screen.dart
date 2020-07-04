@@ -154,10 +154,15 @@ class _SignUpState extends State<SignUp> {
                         height: screenHeight(context, 0.1),
                         child: RaisedButton(
                           onPressed: signIn,
-                          child: Text('Sign Up'),
+                          child: Text(
+                            'Sign Up',
+                            style: TextStyle(
+                                color: UiColors.color1,
+                                fontWeight: FontWeight.bold),
+                          ),
                           color: UiColors.color2,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(10),
                           ),
                         ),
                       ),
@@ -176,7 +181,7 @@ class _SignUpState extends State<SignUp> {
                               TextSpan(
                                 text: 'Sign In',
                                 style: TextStyle(
-                                    color: UiColors.color3,
+                                    color: UiColors.color2,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 17.0),
                               ),

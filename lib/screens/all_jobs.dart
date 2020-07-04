@@ -19,7 +19,7 @@ class _AllJobsState extends State<AllJobs> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: UiColors.color1,
+      backgroundColor: UiColors.bg,
       body: ModalProgressHUD(
         inAsyncCall: _loading,
         child: SafeArea(
@@ -28,25 +28,16 @@ class _AllJobsState extends State<AllJobs> {
               Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        Text(
-                          'All Jobs',
-                          style: TextStyle(
-                              fontSize: 25.0, fontWeight: FontWeight.w400),
-                        ),
-                        Spacer(),
-                        GestureDetector(
-                          onTap: () {
-                            auth.signOut();
-                          },
-                          child: Icon(
-                            Icons.notifications,
-                            color: Colors.grey[500],
-                          ),
-                        ),
-                      ],
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Icon(
+                        Icons.arrow_back_ios,
+                        color: UiColors.color2,
+                      ),
                     ),
                     SizedBox(
                       height: screenHeight(context, 0.02),
@@ -56,28 +47,34 @@ class _AllJobsState extends State<AllJobs> {
                       child: ListView(
                         children: [
                           Container(
-                            height: screenHeight(context, 0.07),
+                            height: screenHeight(context, 0.09),
                             decoration: BoxDecoration(
-                              color: UiColors.bg,
+                              color: UiColors.color1,
                               borderRadius: BorderRadius.circular(
-                                10,
+                                25,
                               ),
                             ),
                             child: TextField(
-                              decoration:
-                                  textInputDecoration(hintText: 'Search jobs'),
+                              decoration: textInputDecoration(
+                                hintText: 'Search jobs',
+                                sicon: IconButton(
+                                  icon: Icon(Icons.search),
+                                  onPressed: () {},
+                                ),
+                              ),
                             ),
                           ),
                           SizedBox(
                             height: screenHeight(context, 0.025),
                           ),
-                          // Text(
-                          //   'All Roles',
-                          //   style: TextStyle(
-                          //       fontWeight: FontWeight.bold,
-                          //       fontSize: 20.0),
-                          // ),
-                          // Spacer(),
+                          Text(
+                            'Browse jobs',
+                            style: TextStyle(
+                                color: UiColors.color2,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 20.0),
+                          ),
+                          Spacer(),
                           Expanded(
                             child: Container(
                               height: screenHeight(context, 0.9),
@@ -101,17 +98,21 @@ class _AllJobsState extends State<AllJobs> {
                                   final jobData = snapshot.data.documents;
                                   List<JobCard> jobslistWidget = [];
                                   for (var job in jobData) {
+                                    final company = job.data['company'];
                                     final title = job.data['title'];
                                     final location = job.data['location'];
                                     final options = job.data['options'];
+                                    final type = job.data['type'];
                                     final salary = job.data['salary'];
                                     final status = job.data['status'];
                                     final description = job.data['description'];
 
                                     final jobWidget = JobCard(
+                                      company: company,
                                       title: title,
                                       location: location,
                                       options: options,
+                                      type: type,
                                       salary: salary,
                                       status: status,
                                       description: description,
