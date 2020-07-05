@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:we_work/services/auth.dart';
+import 'package:we_work/services/database.dart';
 import 'package:we_work/utils/colors.dart';
 import 'package:we_work/utils/responsive.dart';
 
@@ -12,7 +15,7 @@ class JobCard extends StatelessWidget {
   final String status;
   final String description;
 
-  const JobCard(
+  JobCard(
       {this.title,
       this.location,
       this.options,
@@ -21,6 +24,9 @@ class JobCard extends StatelessWidget {
       this.description,
       this.company,
       this.type});
+
+  final Auth _auth = new Auth();
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -119,6 +125,8 @@ class JobCard extends StatelessWidget {
   }
 
   Future buildShowModalBottomSheet(BuildContext context) {
+    final user = Provider.of<User>(context, listen: false);
+
     return showModalBottomSheet(
         isScrollControlled: true,
         context: context,
@@ -250,7 +258,9 @@ class JobCard extends StatelessWidget {
                                 width: screenWidth(context, 0.7),
                                 height: screenHeight(context, 0.1),
                                 child: RaisedButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    new Queries().addApplication(user.uid);
+                                  },
                                   child: Text(
                                     status == 'open' ? 'Apply' : 'Can\'t Apply',
                                     style: TextStyle(

@@ -56,7 +56,7 @@ class _ProfileState extends State<Profile> {
         _loading = true;
       });
       try {
-        await queries.saveprofile(_uid, _name.text, _email.text, _phone.text,
+        await queries.createprofile(_uid, _name.text, _email.text, _phone.text,
             _selectedexperience, _github.text, _resume.text, _applications);
         setState(() {
           _loading = false;
