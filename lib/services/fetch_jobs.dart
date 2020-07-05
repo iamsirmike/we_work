@@ -5,14 +5,13 @@ class FetchJobs {
   final CollectionReference jobs = Firestore.instance.collection("jobs");
 
   Stream<List<Jobs>> get jobsStream {
-    // print(jobs.snapshots().map(_jobsList).length);
     return jobs.snapshots().map(_jobsList);
   }
 
   List<Jobs> _jobsList(QuerySnapshot snapshot) {
-    // print(snapshot.documents[0].data["company"]);
     return snapshot.documents
         .map((job) => Jobs(
+            jobRef: job.reference,
             company: job.data['company'] ?? "",
             title: job.data['title'] ?? "",
             location: job.data['location'] ?? "",

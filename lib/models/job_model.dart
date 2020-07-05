@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Jobs {
+  final DocumentReference jobRef;
   final String company;
   final String title;
   final String location;
@@ -9,7 +12,8 @@ class Jobs {
   final String type;
 
   Jobs(
-      {this.company,
+      {this.jobRef,
+      this.company,
       this.title,
       this.location,
       this.options,

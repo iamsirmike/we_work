@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:provider/provider.dart';
 import 'package:we_work/models/job_model.dart';
+import 'package:we_work/providers/jobs_provider.dart';
 import 'package:we_work/services/auth.dart';
 import 'package:we_work/services/fetch_jobs.dart';
 import 'package:we_work/utils/colors.dart';
@@ -20,6 +22,8 @@ class _HomeState extends State<Home> {
   final _firestore = Firestore.instance;
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<User>(context, listen: false);
+    // print(user.uid);
     return Scaffold(
       backgroundColor: UiColors.bg,
       body: ModalProgressHUD(
@@ -122,19 +126,25 @@ class _HomeState extends State<Home> {
                                 }
 
                                 List job = snapshot.data;
+                                // print(job[0].jobRef);
                                 return ListView.builder(
                                   physics: NeverScrollableScrollPhysics(),
                                   itemCount: job.length,
                                   itemBuilder: (context, index) {
-                                    return JobCard(
-                                      company: job[index].company,
-                                      title: job[index].title,
-                                      location: job[index].location,
-                                      options: job[index].options,
-                                      type: job[index].type,
-                                      salary: job[index].salary,
-                                      status: job[index].status,
-                                      description: job[index].description,
+                                    return ChangeNotifierProvider<JobsProvider>(
+                                      create: (context) => JobsProvider(
+                                          user.uid, job[index].jobRef),
+                                      child: JobCard(
+                                        jobRef: job[index].jobRef,
+                                        company: job[index].company,
+                                        title: job[index].title,
+                                        location: job[index].location,
+                                        options: job[index].options,
+                                        type: job[index].type,
+                                        salary: job[index].salary,
+                                        status: job[index].status,
+                                        description: job[index].description,
+                                      ),
                                     );
                                   },
                                 );

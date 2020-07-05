@@ -27,36 +27,29 @@ class Queries {
             await transaction.get(user.document(uid));
         await transaction.update(
             freshSnapshot.reference, {'profile': profile.document(pid)});
-      }).catchError((onError) {
-        print(
-            "UNABLE TO UPDATE PROFILE STATUS   <<<<<<<==================>>>>>>  ${onError.message}");
-        return null;
-      });
+      }).catchError((onError) => throw new PlatformException(
+          code: onError.code, message: onError.message));
     } on PlatformException catch (e) {
       print(
-          "UNABLE TO UPDATE PROFILE STATUS   <<<<<<==================>>>>>>  ${e.message}");
+          "PROFILE STATUS UPDATE FAILED <<<<<<========== ${e.message} ==========>>>>>>");
     }
   }
 
-  Future addApplication(String uid) async {
+  Future addApplication(String uid, DocumentReference jobRef) async {
     try {
-      DocumentReference data =
+      DocumentReference userProfileRef =
           await user.document(uid).get().then((value) => value.data['profile']);
-      print(data.documentID);
-
-      Firestore.instance.runTransaction((transaction) async {
-        DocumentSnapshot freshSnapshot =
-            await transaction.get(user.document(data.documentID));
-        // await transaction.update(
-        //     freshSnapshot.reference, {'profile': profile.document(pid)});
-      }).catchError((onError) {
-        print(
-            "UNABLE TO UPDATE PROFILE STATUS   <<<<<<<==================>>>>>>  ${onError.message}");
-        return null;
-      });
+      userProfileRef.firestore.runTransaction((transaction) async {
+        DocumentSnapshot freshSnapshot = await transaction.get(userProfileRef);
+        await transaction.update(freshSnapshot.reference, {
+          'applications': FieldValue.arrayUnion([jobRef])
+        });
+      }).catchError((onError) => throw new PlatformException(
+          code: onError.code, message: onError.message));
     } on PlatformException catch (e) {
       print(
-          "UNABLE TO UPDATE PROFILE STATUS   <<<<<<==================>>>>>>  ${e.message}");
+          "ADD APPLICATION 2   <<<<<<================= ${e.message} ===============>>>>>>");
+      return e.message;
     }
   }
 }
