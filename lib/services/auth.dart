@@ -16,11 +16,7 @@ class User {
       print(uid);
       return await users
           .document(uid)
-          .setData({
-            'profile': null,
-            'active': true,
-            'date_join': FieldValue.serverTimestamp()
-          })
+          .setData({'active': true, 'date_join': FieldValue.serverTimestamp()})
           .then((value) => true)
           .catchError((error) => throw new Exception(error));
     } catch (e) {
