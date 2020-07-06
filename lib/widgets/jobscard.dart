@@ -38,14 +38,11 @@ class _JobCardState extends State<JobCard> {
 
   @override
   Widget build(BuildContext context) {
-    JobsProvider checkApplication =
-        Provider.of<JobsProvider>(context, listen: false);
-
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: GestureDetector(
         onTap: () {
-          buildShowModalBottomSheet(context, checkApplication);
+          buildShowModalBottomSheet(context);
         },
         child: Container(
           height: screenHeight(context, 0.15),
@@ -136,8 +133,7 @@ class _JobCardState extends State<JobCard> {
     );
   }
 
-  Future buildShowModalBottomSheet(
-      BuildContext context, JobsProvider checkApplication) {
+  buildShowModalBottomSheet(BuildContext context) {
     final user = Provider.of<User>(context, listen: false);
     return showModalBottomSheet(
         isScrollControlled: true,
@@ -267,34 +263,27 @@ class _JobCardState extends State<JobCard> {
                                 ),
                               ),
                               Container(
-                                  width: screenWidth(context, 0.7),
-                                  height: screenHeight(context, 0.1),
-                                  child: RaisedButton(
-                                    onPressed: () => applicationHandler(user),
-                                    child: checkApplication.hasApplied
-                                        ? Text(
-                                            "Pending Review",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 20.0,
-                                                color: Colors.white),
-                                          )
-                                        : Text(
-                                            widget.status == 'open'
-                                                ? applicationText
-                                                : 'Closed',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 20.0,
-                                                color: Colors.white),
-                                          ),
-                                    color: widget.status == 'open'
-                                        ? UiColors.color2
-                                        : Colors.red,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                  )),
+                                width: screenWidth(context, 0.7),
+                                height: screenHeight(context, 0.1),
+                                child: RaisedButton(
+                                  onPressed: () => applicationHandler(user),
+                                  child: Text(
+                                    widget.status == 'open'
+                                        ? applicationText
+                                        : 'Closed',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20.0,
+                                        color: Colors.white),
+                                  ),
+                                  color: widget.status == 'open'
+                                      ? UiColors.color2
+                                      : Colors.red,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ),

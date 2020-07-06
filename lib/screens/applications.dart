@@ -11,18 +11,19 @@ import 'package:we_work/utils/responsive.dart';
 import 'package:we_work/widgets/input_decoration.dart';
 import 'package:we_work/widgets/jobscard.dart';
 
-class Home extends StatefulWidget {
+class Applications extends StatefulWidget {
   @override
-  _HomeState createState() => _HomeState();
+  _ApplicationsState createState() => _ApplicationsState();
 }
 
-class _HomeState extends State<Home> {
+class _ApplicationsState extends State<Applications> {
   bool _loading = false;
   Auth auth = Auth();
 
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context, listen: false);
+    print(new FetchJobs().fetchApplications(user.uid));
     // print(user.uid);
     return Scaffold(
       backgroundColor: UiColors.bg,
@@ -109,10 +110,13 @@ class _HomeState extends State<Home> {
                           ),
                           Container(
                             height: screenHeight(context, 1),
-                            child: StreamBuilder<List<Jobs>>(
-                              stream: new FetchJobs().jobsStream,
+                            child: StreamBuilder<List>(
+                              stream: new FetchJobs()
+                                  .fetchApplications(user.uid)
+                                  .asStream(),
                               builder: (context, snapshot) {
                                 if (!snapshot.hasData) {
+                                  print(snapshot.error);
                                   return Padding(
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 120.0),
@@ -130,17 +134,32 @@ class _HomeState extends State<Home> {
                                   physics: NeverScrollableScrollPhysics(),
                                   itemCount: job.length,
                                   itemBuilder: (context, index) {
-                                    return JobCard(
-                                      jobRef: job[index].jobRef,
-                                      company: job[index].company,
-                                      title: job[index].title,
-                                      location: job[index].location,
-                                      options: job[index].options,
-                                      type: job[index].type,
-                                      salary: job[index].salary,
-                                      status: job[index].status,
-                                      description: job[index].description,
-                                    );
+                                    // print(job[index].get().then(
+                                    //     (value) => value.data['company']));
+
+                                    // return JobCard(
+                                    //   jobRef: job[index]
+                                    //       .get()
+                                    //       .then((value) => value.reference),
+                                    //   company: job[index].get().then(
+                                    //       (value) => value.data['company']),
+                                    //   title: job[index]
+                                    //       .get()
+                                    //       .then((value) => value.data['title']),
+                                    //   location: job[index].get().then(
+                                    //       (value) => value.data['location']),
+                                    //   options: job[index].get().then(
+                                    //       (value) => value.data['options']),
+                                    //   type: job[index]
+                                    //       .get()
+                                    //       .then((value) => value.data['type']),
+                                    //   salary: job[index].get().then(
+                                    //       (value) => value.data['salary']),
+                                    //   status: job[index].get().then(
+                                    //       (value) => value.data['status']),
+                                    //   description: job[index].get().then(
+                                    //       (value) => value.data['description']),
+                                    // );
                                   },
                                 );
                               },

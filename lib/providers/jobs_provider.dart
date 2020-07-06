@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:we_work/services/database.dart';
 
 class JobsProvider with ChangeNotifier {
   String uid;
@@ -8,10 +9,6 @@ class JobsProvider with ChangeNotifier {
   CollectionReference user = Firestore.instance.collection("users");
   bool _hasApplied = false;
   bool get hasApplied => _hasApplied;
-
-  JobsProvider(this.uid, this.jobRef) {
-    checkApplicationExist(uid, jobRef);
-  }
 
   Future checkApplicationExist(String uid, DocumentReference jobRef) async {
     DocumentReference userProfileRef =

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:we_work/screens/applications.dart';
 import 'package:we_work/screens/home.dart';
 import 'package:we_work/screens/profile.dart';
 import 'package:we_work/utils/colors.dart';
@@ -20,7 +21,7 @@ class _DashboardState extends State<Dashboard> {
 
   final pages = [
     Home(),
-    Home(),
+    Applications(),
     Home(),
     Profile(),
   ];
