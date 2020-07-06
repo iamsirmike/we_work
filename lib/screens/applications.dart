@@ -11,19 +11,21 @@ import 'package:we_work/utils/responsive.dart';
 import 'package:we_work/widgets/input_decoration.dart';
 import 'package:we_work/widgets/jobscard.dart';
 
-class Home extends StatefulWidget {
+class Applications extends StatefulWidget {
   @override
-  _HomeState createState() => _HomeState();
+  _ApplicationsState createState() => _ApplicationsState();
 }
 
-class _HomeState extends State<Home> {
+class _ApplicationsState extends State<Applications> {
   bool _loading = false;
   Auth auth = Auth();
+  FetchJobs fetchJobs = new FetchJobs();
 
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context, listen: false);
-    // print(user.uid);
+    fetchJobs.setUid = user.uid;
+
     return Scaffold(
       backgroundColor: UiColors.bg,
       body: ModalProgressHUD(
@@ -67,7 +69,7 @@ class _HomeState extends State<Home> {
                             decoration: BoxDecoration(
                               color: UiColors.color1,
                               borderRadius: BorderRadius.circular(
-                                10,
+                                25,
                               ),
                             ),
                             child: TextField(
@@ -108,44 +110,42 @@ class _HomeState extends State<Home> {
                             ],
                           ),
                           Container(
-                            height: screenHeight(context, 1),
-                            child: StreamBuilder<List<Jobs>>(
-                              stream: new FetchJobs().jobsStream,
-                              builder: (context, snapshot) {
-                                if (!snapshot.hasData) {
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 120.0),
-                                    child: Container(
-                                      child: Center(
-                                        child: CircularProgressIndicator(
-                                            backgroundColor: Colors.lightBlue),
-                                      ),
-                                    ),
-                                  );
-                                }
+                              height: screenHeight(context, 1),
+                              child: StreamBuilder<List<Jobs>>(
+                                  stream: fetchJobs.applicationsStream,
+                                  builder: (context, snapshot) {
+                                    if (!snapshot.hasData) {
+                                      return Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 120.0),
+                                        child: Container(
+                                          child: Center(
+                                            child: CircularProgressIndicator(
+                                                backgroundColor:
+                                                    Colors.lightBlue),
+                                          ),
+                                        ),
+                                      );
+                                    }
 
-                                List job = snapshot.data;
-                                return ListView.builder(
-                                  physics: NeverScrollableScrollPhysics(),
-                                  itemCount: job.length,
-                                  itemBuilder: (context, index) {
-                                    return JobCard(
-                                      jobRef: job[index].jobRef,
-                                      company: job[index].company,
-                                      title: job[index].title,
-                                      location: job[index].location,
-                                      options: job[index].options,
-                                      type: job[index].type,
-                                      salary: job[index].salary,
-                                      status: job[index].status,
-                                      description: job[index].description,
+                                    List job = snapshot.data;
+                                    return ListView.builder(
+                                      physics: NeverScrollableScrollPhysics(),
+                                      itemCount: job.length,
+                                      itemBuilder: (context, index) {
+                                        return JobCard(
+                                          company: job[index].company,
+                                          title: job[index].title,
+                                          location: job[index].location,
+                                          options: job[index].options,
+                                          type: job[index].type,
+                                          salary: job[index].salary,
+                                          status: job[index].status,
+                                          description: job[index].description,
+                                        );
+                                      },
                                     );
-                                  },
-                                );
-                              },
-                            ),
-                          )
+                                  }))
                         ],
                       ),
                     ),

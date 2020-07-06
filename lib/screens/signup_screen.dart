@@ -30,7 +30,7 @@ class _SignUpState extends State<SignUp> {
         backgroundColor: Colors.red,
       );
 
-  Future<void> signIn() async {
+  Future<void> signUp() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
 
@@ -53,6 +53,9 @@ class _SignUpState extends State<SignUp> {
                   snackBar("An unknown error occured, please try again"));
           }
         });
+      } else {
+        //For some reason the stream doesn't change the page automatically so i had to force it there...
+        Navigator.pushReplacementNamed(context, '/dashboard');
       }
     }
   }
@@ -153,7 +156,7 @@ class _SignUpState extends State<SignUp> {
                         width: screenWidth(context, 1),
                         height: screenHeight(context, 0.1),
                         child: RaisedButton(
-                          onPressed: signIn,
+                          onPressed: signUp,
                           child: Text(
                             'Sign Up',
                             style: TextStyle(

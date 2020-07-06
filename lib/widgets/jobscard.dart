@@ -1,8 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:we_work/providers/jobs_provider.dart';
+import 'package:we_work/services/auth.dart';
+import 'package:we_work/services/database.dart';
 import 'package:we_work/utils/colors.dart';
 import 'package:we_work/utils/responsive.dart';
 
-class JobCard extends StatelessWidget {
+class JobCard extends StatefulWidget {
+  final DocumentReference jobRef;
   final String company;
   final String title;
   final String location;
@@ -12,8 +18,9 @@ class JobCard extends StatelessWidget {
   final String status;
   final String description;
 
-  const JobCard(
-      {this.title,
+  JobCard(
+      {this.jobRef,
+      this.title,
       this.location,
       this.options,
       this.salary,
@@ -21,6 +28,14 @@ class JobCard extends StatelessWidget {
       this.description,
       this.company,
       this.type});
+
+  @override
+  _JobCardState createState() => _JobCardState();
+}
+
+class _JobCardState extends State<JobCard> {
+  String applicationText = "Apply";
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -80,7 +95,7 @@ class JobCard extends StatelessWidget {
                       Container(
                         width: screenWidth(context, 0.5),
                         child: Text(
-                          title,
+                          widget.title,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontSize: 16.0,
@@ -92,7 +107,7 @@ class JobCard extends StatelessWidget {
                       Row(
                         children: [
                           Text(
-                            company,
+                            widget.company,
                             style: TextStyle(
                               color: UiColors.color5,
                               fontWeight: FontWeight.bold,
@@ -100,7 +115,7 @@ class JobCard extends StatelessWidget {
                           ),
                           SizedBox(width: 7),
                           Text(
-                            '- $location',
+                            '- ${widget.location}',
                             style: TextStyle(color: UiColors.color5),
                           ),
                         ],
@@ -118,7 +133,8 @@ class JobCard extends StatelessWidget {
     );
   }
 
-  Future buildShowModalBottomSheet(BuildContext context) {
+  buildShowModalBottomSheet(BuildContext context) {
+    final user = Provider.of<User>(context, listen: false);
     return showModalBottomSheet(
         isScrollControlled: true,
         context: context,
@@ -171,7 +187,7 @@ class JobCard extends StatelessWidget {
                           height: screenHeight(context, 0.03),
                         ),
                         Text(
-                          title,
+                          widget.title,
                           style: TextStyle(
                             fontSize: 20.0,
                             fontWeight: FontWeight.bold,
@@ -181,7 +197,7 @@ class JobCard extends StatelessWidget {
                           height: screenHeight(context, 0.01),
                         ),
                         Text(
-                          '\$$salary',
+                          '\$${widget.salary}',
                           style: TextStyle(
                               // color: UiColors.color5,
                               ),
@@ -193,13 +209,13 @@ class JobCard extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             DetailsCard(
-                              label: location,
+                              label: widget.location,
                             ),
                             DetailsCard(
-                              label: options,
+                              label: widget.options,
                             ),
                             DetailsCard(
-                              label: type,
+                              label: widget.type,
                             ),
                           ],
                         ),
@@ -222,7 +238,7 @@ class JobCard extends StatelessWidget {
                         ),
                         Container(
                           child: Text(
-                            description,
+                            widget.description,
                             style: TextStyle(color: Colors.grey[400]),
                           ),
                         ),
@@ -250,15 +266,17 @@ class JobCard extends StatelessWidget {
                                 width: screenWidth(context, 0.7),
                                 height: screenHeight(context, 0.1),
                                 child: RaisedButton(
-                                  onPressed: () {},
+                                  onPressed: () => applicationHandler(user),
                                   child: Text(
-                                    status == 'open' ? 'Apply' : 'Can\'t Apply',
+                                    widget.status == 'open'
+                                        ? applicationText
+                                        : 'Closed',
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 20.0,
                                         color: Colors.white),
                                   ),
-                                  color: status == 'open'
+                                  color: widget.status == 'open'
                                       ? UiColors.color2
                                       : Colors.red,
                                   shape: RoundedRectangleBorder(
@@ -275,6 +293,14 @@ class JobCard extends StatelessWidget {
                 ),
               ),
             ));
+  }
+
+  applicationHandler(User user) {
+    if (widget.status == "open") {
+      new Queries().addApplication(user.uid, widget.jobRef);
+    } else {
+      return null;
+    }
   }
 }
 
