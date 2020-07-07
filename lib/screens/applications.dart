@@ -88,33 +88,34 @@ class _ApplicationsState extends State<Applications> {
                           Row(
                             children: [
                               Text(
-                                'Recent jobs',
+                                'Applications',
                                 style: TextStyle(
                                     color: UiColors.color2,
                                     fontWeight: FontWeight.w500,
                                     fontSize: 20.0),
                               ),
                               Spacer(),
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.pushNamed(context, '/alljobs');
-                                },
-                                child: Text(
-                                  'View All',
-                                  style: TextStyle(
-                                    fontSize: 15.0,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
+                              // GestureDetector(
+                              //   onTap: () {
+                              //     Navigator.pushNamed(context, '/alljobs');
+                              //   },
+                              //   child: Text(
+                              //     'View All',
+                              //     style: TextStyle(
+                              //       fontSize: 15.0,
+                              //       fontWeight: FontWeight.bold,
+                              //     ),
+                              //   ),
+                              // ),
                             ],
                           ),
                           Container(
                               height: screenHeight(context, 1),
-                              child: StreamBuilder<List<Jobs>>(
+                              child: StreamBuilder<List<Stream<Jobs>>>(
                                   stream: fetchJobs.applicationsStream,
                                   builder: (context, snapshot) {
                                     if (!snapshot.hasData) {
+                                      // print(snapshot.error);
                                       return Padding(
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 120.0),
@@ -128,21 +129,43 @@ class _ApplicationsState extends State<Applications> {
                                       );
                                     }
 
-                                    List job = snapshot.data;
+                                    List jobs = snapshot.data;
                                     return ListView.builder(
                                       physics: NeverScrollableScrollPhysics(),
-                                      itemCount: job.length,
+                                      itemCount: jobs.length,
                                       itemBuilder: (context, index) {
-                                        return JobCard(
-                                          company: job[index].company,
-                                          title: job[index].title,
-                                          location: job[index].location,
-                                          options: job[index].options,
-                                          type: job[index].type,
-                                          salary: job[index].salary,
-                                          status: job[index].status,
-                                          description: job[index].description,
-                                        );
+                                        return StreamBuilder<Jobs>(
+                                            stream: jobs[index],
+                                            builder: (context, snapshot) {
+                                              if (!snapshot.hasData) {
+                                                // print(snapshot.error);
+                                                return Padding(
+                                                  padding: const EdgeInsets
+                                                          .symmetric(
+                                                      vertical: 120.0),
+                                                  child: Container(
+                                                    child: Center(
+                                                      child:
+                                                          CircularProgressIndicator(
+                                                              backgroundColor:
+                                                                  Colors
+                                                                      .lightBlue),
+                                                    ),
+                                                  ),
+                                                );
+                                              }
+                                              Jobs job = snapshot.data;
+                                              return JobCard(
+                                                company: job.company,
+                                                title: job.title,
+                                                location: job.location,
+                                                options: job.options,
+                                                type: job.type,
+                                                salary: job.salary,
+                                                status: job.status,
+                                                description: job.description,
+                                              );
+                                            });
                                       },
                                     );
                                   }))
