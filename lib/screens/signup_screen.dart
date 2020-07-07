@@ -14,8 +14,10 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends State<SignUp> {
   final _formKey = GlobalKey<FormState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   bool _loading = false;
+  bool _isPasswordMasked = true;
   final Auth auth = Auth(); /*  */
   final TextEditingController _emailcontroller = TextEditingController();
   final TextEditingController _passwordcontroller = TextEditingController();
@@ -23,42 +25,37 @@ class _SignUpState extends State<SignUp> {
   String get _email => _emailcontroller.text;
   String get _pass => _passwordcontroller.text;
 
-  Future<void> signIn() async {
+  Widget snackBar(message) => SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+      );
+
+  Future<void> signUp() async {
     if (_formKey.currentState.validate()) {
+      _formKey.currentState.save();
+
       setState(() {
         _loading = true;
       });
-      try {
-        await auth.signupwithemail(_email, _pass);
-        // if (newUser != null) {
-        //   Navigator.pushNamed(context, '/signin');
-        //   _emailcontroller.clear();
-        //   _passwordcontroller.clear();
-        // }
+      dynamic user = await auth.signupwithemail(_email.trim(), _pass.trim());
+      print(user);
+      if (user.runtimeType != User) {
+        // print(user);
         setState(() {
           _loading = false;
+          switch (user) {
+            case "ERROR_EMAIL_ALREADY_IN_USE":
+              _scaffoldKey.currentState
+                  .showSnackBar(snackBar("User already exists"));
+              break;
+            default:
+              _scaffoldKey.currentState.showSnackBar(
+                  snackBar("An unknown error occured, please try again"));
+          }
         });
-      } catch (error) {
-        var errorMessage = error.message.toString();
-        showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: Text('Sign up failed'),
-              content: Text(errorMessage),
-              actions: [
-                FlatButton(
-                    onPressed: () {
-                      setState(() {
-                        _loading = false;
-                      });
-                      Navigator.pop(context);
-                    },
-                    child: Text('OK'))
-              ],
-            );
-          },
-        );
+      } else {
+        //For some reason the stream doesn't change the page automatically so i had to force it there...
+        Navigator.pushReplacementNamed(context, '/dashboard');
       }
     }
   }
@@ -66,6 +63,7 @@ class _SignUpState extends State<SignUp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       body: ModalProgressHUD(
         inAsyncCall: _loading,
         child: SafeArea(
@@ -127,12 +125,24 @@ class _SignUpState extends State<SignUp> {
                             }
                             return null;
                           },
-                          obscureText: true,
+                          obscureText: _isPasswordMasked,
                           keyboardType: TextInputType.emailAddress,
                           style: TextStyle(color: Colors.grey[500]),
                           decoration: textInputDecoration(
                             labelText: 'Password',
-                            sicon: Icon(Icons.remove_red_eye),
+                            sicon: IconButton(
+                                icon: Icon(
+                                  _isPasswordMasked
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                  color: Colors.black38,
+                                  size: 23.0,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _isPasswordMasked = !_isPasswordMasked;
+                                  });
+                                }),
                           ),
                         ),
                       ),
@@ -146,11 +156,16 @@ class _SignUpState extends State<SignUp> {
                         width: screenWidth(context, 1),
                         height: screenHeight(context, 0.1),
                         child: RaisedButton(
-                          onPressed: signIn,
-                          child: Text('Sign Up'),
+                          onPressed: signUp,
+                          child: Text(
+                            'Sign Up',
+                            style: TextStyle(
+                                color: UiColors.color1,
+                                fontWeight: FontWeight.bold),
+                          ),
                           color: UiColors.color2,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(10),
                           ),
                         ),
                       ),
@@ -169,7 +184,7 @@ class _SignUpState extends State<SignUp> {
                               TextSpan(
                                 text: 'Sign In',
                                 style: TextStyle(
-                                    color: UiColors.color3,
+                                    color: UiColors.color2,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 17.0),
                               ),

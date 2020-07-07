@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -6,8 +7,22 @@ import 'package:google_sign_in/google_sign_in.dart';
 //create a user class and constructor
 class User {
   final String uid;
+  CollectionReference users = Firestore.instance.collection("users");
 
   User({@required this.uid});
+
+  Future saveUser() async {
+    try {
+      print(uid);
+      return await users
+          .document(uid)
+          .setData({'active': true, 'date_join': FieldValue.serverTimestamp()})
+          .then((value) => true)
+          .catchError((error) => throw new Exception(error));
+    } catch (e) {
+      print(e);
+    }
+  }
 }
 
 // hook the Auth class to the abstract class
@@ -51,16 +66,33 @@ class Auth {
   //   return null;
   // }
 
-  Future<User> signupwithemail(email, pass) async {
-    final authResult = await FirebaseAuth.instance
-        .createUserWithEmailAndPassword(email: email, password: pass);
-    return _userFromFirebase(authResult.user);
+  Future<dynamic> signupwithemail(email, pass) async {
+    try {
+      return await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: pass)
+          .then((value) {
+        new User(uid: value.user.uid).saveUser();
+        return _userFromFirebase(value.user);
+      }).catchError((onError) => throw new PlatformException(
+              code: onError.code, message: onError.message));
+    } on PlatformException catch (e) {
+      return e.code;
+    }
   }
 
-  Future<User> signinwithemail(email, pass) async {
-    final authResult =
-        await _auth.signInWithEmailAndPassword(email: email, password: pass);
-    return _userFromFirebase(authResult.user);
+/* Made some few changes here
+  Returns dynamic so that i can return the firebase exceptions if any is thrown
+ */
+  Future<dynamic> signinwithemail(email, pass) async {
+    try {
+      return await _auth
+          .signInWithEmailAndPassword(email: email, password: pass)
+          .then((value) => _userFromFirebase(value.user))
+          .catchError((onError) => throw new PlatformException(
+              code: onError.code, message: onError.message));
+    } on PlatformException catch (e) {
+      return e.code;
+    }
   }
 
   Future<void> resetPassword(String email) async {
@@ -80,6 +112,7 @@ class Auth {
             accessToken: googleAuth.accessToken,
           ),
         );
+        new User(uid: authResult.user.uid).saveUser();
         return _userFromFirebase(authResult.user);
       } else {
         throw PlatformException(

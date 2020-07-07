@@ -1,7 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:provider/provider.dart';
+import 'package:we_work/models/job_model.dart';
+import 'package:we_work/providers/jobs_provider.dart';
 import 'package:we_work/services/auth.dart';
+import 'package:we_work/services/fetch_jobs.dart';
 import 'package:we_work/utils/colors.dart';
 import 'package:we_work/utils/responsive.dart';
 import 'package:we_work/widgets/input_decoration.dart';
@@ -15,11 +19,13 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   bool _loading = false;
   Auth auth = Auth();
-  final _firestore = Firestore.instance;
+
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<User>(context, listen: false);
+    // print(user.uid);
     return Scaffold(
-      backgroundColor: UiColors.color1,
+      backgroundColor: UiColors.bg,
       body: ModalProgressHUD(
         inAsyncCall: _loading,
         child: ListView(
@@ -31,16 +37,10 @@ class _HomeState extends State<Home> {
                   children: [
                     Row(
                       children: [
-                        GestureDetector(
-                          onTap: () async {
-                            var loggedIn = await auth.getcurrentUser();
-                            print(loggedIn.uid);
-                          },
-                          child: Text(
-                            'New Jobs',
-                            style: TextStyle(
-                                fontSize: 25.0, fontWeight: FontWeight.w400),
-                          ),
+                        Icon(
+                          Icons.sort,
+                          size: 25.0,
+                          color: UiColors.color2,
                         ),
                         Spacer(),
                         GestureDetector(
@@ -48,8 +48,9 @@ class _HomeState extends State<Home> {
                             auth.signOut();
                           },
                           child: Icon(
-                            Icons.notifications,
-                            color: Colors.grey[500],
+                            Icons.notifications_none,
+                            size: 25.0,
+                            color: UiColors.color2,
                           ),
                         ),
                       ],
@@ -62,16 +63,21 @@ class _HomeState extends State<Home> {
                       child: ListView(
                         children: [
                           Container(
-                            height: screenHeight(context, 0.07),
+                            height: screenHeight(context, 0.09),
                             decoration: BoxDecoration(
-                              color: UiColors.bg,
+                              color: UiColors.color1,
                               borderRadius: BorderRadius.circular(
-                                10,
+                                25,
                               ),
                             ),
                             child: TextField(
-                              decoration:
-                                  textInputDecoration(hintText: 'Search jobs'),
+                              decoration: textInputDecoration(
+                                hintText: 'Search jobs',
+                                sicon: IconButton(
+                                  icon: Icon(Icons.search),
+                                  onPressed: () {},
+                                ),
+                              ),
                             ),
                           ),
                           SizedBox(
@@ -80,9 +86,10 @@ class _HomeState extends State<Home> {
                           Row(
                             children: [
                               Text(
-                                'Latest Roles',
+                                'Recent jobs',
                                 style: TextStyle(
-                                    fontWeight: FontWeight.bold,
+                                    color: UiColors.color2,
+                                    fontWeight: FontWeight.w500,
                                     fontSize: 20.0),
                               ),
                               Spacer(),
@@ -93,67 +100,69 @@ class _HomeState extends State<Home> {
                                 child: Text(
                                   'View All',
                                   style: TextStyle(
-                                      fontSize: 15.0, color: Colors.grey[500]),
+                                    fontSize: 15.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             ],
                           ),
-                          Expanded(
-                            child: Container(
-                              height: screenHeight(context, 0.8),
-                              child: StreamBuilder<QuerySnapshot>(
-                                stream: _firestore
-                                    .collection('jobs')
-                                    .where('status', isEqualTo: 'open')
-                                    // .orderBy('timestamp', descending: true)
-                                    .limit(10)
-                                    .snapshots(),
-                                builder: (context, snapshot) {
-                                  if (!snapshot.hasData) {
-                                    return Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 120.0),
-                                      child: Container(
-                                        child: Center(
-                                          child: CircularProgressIndicator(
-                                              backgroundColor:
-                                                  Colors.lightBlue),
-                                        ),
+                          Container(
+                            height: screenHeight(context, 1),
+                            child: StreamBuilder<Future<List<Jobs>>>(
+                              stream: new FetchJobs().jobsStream,
+                              builder: (context, snapshot) {
+                                if (!snapshot.hasData) {
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 120.0),
+                                    child: Container(
+                                      child: Center(
+                                        child: CircularProgressIndicator(
+                                            backgroundColor: Colors.lightBlue),
                                       ),
-                                    );
-                                  }
-                                  final jobData = snapshot.data.documents;
-                                  List<JobCard> jobslistWidget = [];
-                                  for (var job in jobData) {
-                                    final title = job.data['title'];
-                                    final location = job.data['location'];
-                                    final options = job.data['options'];
-                                    final salary = job.data['salary'];
-                                    final status = job.data['status'];
-                                    final description = job.data['description'];
-
-                                    final jobWidget = JobCard(
-                                      title: title,
-                                      location: location,
-                                      options: options,
-                                      salary: salary,
-                                      status: status,
-                                      description: description,
-                                    );
-                                    jobslistWidget.add(jobWidget);
-                                  }
-                                  return ListView(
-                                    physics: NeverScrollableScrollPhysics(),
-                                    children: jobslistWidget,
+                                    ),
                                   );
-                                },
-                              ),
+                                }
+
+                                return FutureBuilder<List<Jobs>>(
+                                    future: snapshot.data,
+                                    builder: (context, snapshot) {
+                                      if (!snapshot.hasData) {
+                                        return Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 120.0),
+                                          child: Container(
+                                            child: Center(
+                                              child: CircularProgressIndicator(
+                                                  backgroundColor:
+                                                      Colors.lightBlue),
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                      List job = snapshot.data;
+                                      return ListView.builder(
+                                        physics: NeverScrollableScrollPhysics(),
+                                        itemCount: job.length,
+                                        itemBuilder: (context, index) {
+                                          return JobCard(
+                                            jobRef: job[index].jobRef,
+                                            company: job[index].company,
+                                            title: job[index].title,
+                                            location: job[index].location,
+                                            options: job[index].options,
+                                            type: job[index].type,
+                                            salary: job[index].salary,
+                                            status: job[index].status,
+                                            description: job[index].description,
+                                          );
+                                        },
+                                      );
+                                    });
+                              },
                             ),
                           )
-                          // ...jobData
-                          //     .getRange(0, 10)
-                          //     .map((index) => jobCard(context, index))
-                          //     .toList(),
                         ],
                       ),
                     ),
