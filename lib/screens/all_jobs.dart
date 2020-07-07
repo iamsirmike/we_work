@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:we_work/models/job_model.dart';
 import 'package:we_work/services/auth.dart';
+import 'package:we_work/services/fetch_jobs.dart';
 import 'package:we_work/utils/colors.dart';
 import 'package:we_work/utils/responsive.dart';
 import 'package:we_work/widgets/input_decoration.dart';
@@ -75,57 +77,60 @@ class _AllJobsState extends State<AllJobs> {
                                 fontSize: 20.0),
                           ),
                           Spacer(),
-                          Expanded(
-                            child: Container(
-                              height: screenHeight(context, 0.9),
-                              child: StreamBuilder<QuerySnapshot>(
-                                stream:
-                                    _firestore.collection('jobs').snapshots(),
-                                builder: (context, snapshot) {
-                                  if (!snapshot.hasData) {
-                                    return Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 120.0),
-                                      child: Container(
-                                        child: Center(
-                                          child: CircularProgressIndicator(
-                                              backgroundColor:
-                                                  Colors.lightBlue),
-                                        ),
+                          Container(
+                            height: screenHeight(context, 0.9),
+                            child: StreamBuilder<Future<List<Jobs>>>(
+                              stream: new FetchJobs().jobsStream,
+                              builder: (context, snapshot) {
+                                if (!snapshot.hasData) {
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 120.0),
+                                    child: Container(
+                                      child: Center(
+                                        child: CircularProgressIndicator(
+                                            backgroundColor: Colors.lightBlue),
                                       ),
-                                    );
-                                  }
-                                  final jobData = snapshot.data.documents;
-                                  List<JobCard> jobslistWidget = [];
-                                  for (var job in jobData) {
-                                    final company = job.data['company'];
-                                    final title = job.data['title'];
-                                    final location = job.data['location'];
-                                    final options = job.data['options'];
-                                    final type = job.data['type'];
-                                    final salary = job.data['salary'];
-                                    final status = job.data['status'];
-                                    final description = job.data['description'];
-
-                                    final jobWidget = JobCard(
-                                      company: company,
-                                      title: title,
-                                      location: location,
-                                      options: options,
-                                      type: type,
-                                      salary: salary,
-                                      status: status,
-                                      description: description,
-                                    );
-                                    jobslistWidget.add(jobWidget);
-                                  }
-                                  return ListView(
-                                    shrinkWrap: true,
-                                    physics: NeverScrollableScrollPhysics(),
-                                    children: jobslistWidget,
+                                    ),
                                   );
-                                },
-                              ),
+                                }
+
+                                return FutureBuilder<List<Jobs>>(
+                                    future: snapshot.data,
+                                    builder: (context, snapshot) {
+                                      if (!snapshot.hasData) {
+                                        return Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 120.0),
+                                          child: Container(
+                                            child: Center(
+                                              child: CircularProgressIndicator(
+                                                  backgroundColor:
+                                                      Colors.lightBlue),
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                      List job = snapshot.data;
+                                      return ListView.builder(
+                                        physics: NeverScrollableScrollPhysics(),
+                                        itemCount: job.length,
+                                        itemBuilder: (context, index) {
+                                          return JobCard(
+                                            jobRef: job[index].jobRef,
+                                            company: job[index].company,
+                                            title: job[index].title,
+                                            location: job[index].location,
+                                            options: job[index].options,
+                                            type: job[index].type,
+                                            salary: job[index].salary,
+                                            status: job[index].status,
+                                            description: job[index].description,
+                                          );
+                                        },
+                                      );
+                                    });
+                              },
                             ),
                           )
                           // ...jobData
