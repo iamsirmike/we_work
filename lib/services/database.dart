@@ -38,6 +38,8 @@ class Queries {
           'pending': true,
         });
         return result;
+      } else {
+        print("Application exists");
       }
     } on PlatformException catch (e) {
       print(
@@ -48,12 +50,15 @@ class Queries {
 
   Future saveJob(String uid, DocumentReference jobRef) async {
     try {
-      var result = await _firestore.collection('saved_jobs').add({
-        'uref': user.document(uid),
-        'jobref': jobRef,
-        'save_date': FieldValue.serverTimestamp(),
-      });
-      return result;
+      DocumentSnapshot checkJobExist = await checkDocumentExist(jobRef);
+      if (checkJobExist == null || !checkJobExist.exists) {
+        var result = await _firestore.collection('saved_jobs').add({
+          'uref': user.document(uid),
+          'jobref': jobRef,
+          'save_date': FieldValue.serverTimestamp(),
+        });
+        return result;
+      }
     } on PlatformException catch (e) {
       print(
           "ADD APPLICATION 2   <<<<<<================= ${e.message} ===============>>>>>>");
