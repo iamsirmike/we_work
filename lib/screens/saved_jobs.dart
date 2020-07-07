@@ -11,12 +11,12 @@ import 'package:we_work/utils/responsive.dart';
 import 'package:we_work/widgets/input_decoration.dart';
 import 'package:we_work/widgets/jobscard.dart';
 
-class Applications extends StatefulWidget {
+class SavedJobs extends StatefulWidget {
   @override
-  _ApplicationsState createState() => _ApplicationsState();
+  _SavedJobsState createState() => _SavedJobsState();
 }
 
-class _ApplicationsState extends State<Applications> {
+class _SavedJobsState extends State<SavedJobs> {
   bool _loading = false;
   Auth auth = Auth();
   FetchJobs fetchJobs = new FetchJobs();
@@ -88,7 +88,7 @@ class _ApplicationsState extends State<Applications> {
                           Row(
                             children: [
                               Text(
-                                'Applications',
+                                'Saved Jobs',
                                 style: TextStyle(
                                     color: UiColors.color2,
                                     fontWeight: FontWeight.w500,
@@ -100,7 +100,7 @@ class _ApplicationsState extends State<Applications> {
                           Container(
                               height: screenHeight(context, 1),
                               child: StreamBuilder<List<Stream<Jobs>>>(
-                                  stream: fetchJobs.applicationsStream,
+                                  stream: fetchJobs.savedJobsStream,
                                   builder: (context, snapshot) {
                                     if (!snapshot.hasData) {
                                       // print(snapshot.error);

@@ -23,28 +23,35 @@ class Queries {
     return result;
   }
 
-  // Future updateHasProfileStatus(String uid, String pid) {
-  //   try {
-  //     Firestore.instance.runTransaction((transaction) async {
-  //       DocumentSnapshot freshSnapshot =
-  //           await transaction.get(user.document(uid));
-  //       await transaction.update(
-  //           freshSnapshot.reference, {'profile': profile.document(pid)});
-  //     }).catchError((onError) => throw new PlatformException(
-  //         code: onError.code, message: onError.message));
-  //   } on PlatformException catch (e) {
-  //     print(
-  //         "PROFILE STATUS UPDATE FAILED <<<<<<========== ${e.message} ==========>>>>>>");
-  //   }
-  // }
+  Future<DocumentSnapshot> checkDocumentExist(DocumentReference jobRef) async {
+    return await (jobRef).get();
+  }
 
   Future addApplication(String uid, DocumentReference jobRef) async {
     try {
-      var result = await _firestore.collection('applications').add({
+      DocumentSnapshot checkJobExist = await checkDocumentExist(jobRef);
+      if (checkJobExist == null || !checkJobExist.exists) {
+        var result = await _firestore.collection('applications').add({
+          'uref': user.document(uid),
+          'jobref': jobRef,
+          'apply_date': FieldValue.serverTimestamp(),
+          'pending': true,
+        });
+        return result;
+      }
+    } on PlatformException catch (e) {
+      print(
+          "ADD APPLICATION 2   <<<<<<================= ${e.message} ===============>>>>>>");
+      return e.message;
+    }
+  }
+
+  Future saveJob(String uid, DocumentReference jobRef) async {
+    try {
+      var result = await _firestore.collection('saved_jobs').add({
         'uref': user.document(uid),
         'jobref': jobRef,
-        'apply_date': FieldValue.serverTimestamp(),
-        'pending': true,
+        'save_date': FieldValue.serverTimestamp(),
       });
       return result;
     } on PlatformException catch (e) {

@@ -109,7 +109,7 @@ class _HomeState extends State<Home> {
                           ),
                           Container(
                             height: screenHeight(context, 1),
-                            child: StreamBuilder<List<Jobs>>(
+                            child: StreamBuilder<Future<List<Jobs>>>(
                               stream: new FetchJobs().jobsStream,
                               builder: (context, snapshot) {
                                 if (!snapshot.hasData) {
@@ -125,24 +125,41 @@ class _HomeState extends State<Home> {
                                   );
                                 }
 
-                                List job = snapshot.data;
-                                return ListView.builder(
-                                  physics: NeverScrollableScrollPhysics(),
-                                  itemCount: job.length,
-                                  itemBuilder: (context, index) {
-                                    return JobCard(
-                                      jobRef: job[index].jobRef,
-                                      company: job[index].company,
-                                      title: job[index].title,
-                                      location: job[index].location,
-                                      options: job[index].options,
-                                      type: job[index].type,
-                                      salary: job[index].salary,
-                                      status: job[index].status,
-                                      description: job[index].description,
-                                    );
-                                  },
-                                );
+                                return FutureBuilder<List<Jobs>>(
+                                    future: snapshot.data,
+                                    builder: (context, snapshot) {
+                                      if (!snapshot.hasData) {
+                                        return Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 120.0),
+                                          child: Container(
+                                            child: Center(
+                                              child: CircularProgressIndicator(
+                                                  backgroundColor:
+                                                      Colors.lightBlue),
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                      List job = snapshot.data;
+                                      return ListView.builder(
+                                        physics: NeverScrollableScrollPhysics(),
+                                        itemCount: job.length,
+                                        itemBuilder: (context, index) {
+                                          return JobCard(
+                                            jobRef: job[index].jobRef,
+                                            company: job[index].company,
+                                            title: job[index].title,
+                                            location: job[index].location,
+                                            options: job[index].options,
+                                            type: job[index].type,
+                                            salary: job[index].salary,
+                                            status: job[index].status,
+                                            description: job[index].description,
+                                          );
+                                        },
+                                      );
+                                    });
                               },
                             ),
                           )

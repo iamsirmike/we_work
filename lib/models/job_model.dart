@@ -21,6 +21,19 @@ class Jobs {
       this.salary,
       this.description,
       this.type});
+
+  factory Jobs.fromSnapshot(DocumentSnapshot job) {
+    return Jobs(
+        jobRef: job.reference,
+        company: job.data['company'] ?? "",
+        title: job.data['title'] ?? "",
+        location: job.data['location'] ?? "",
+        salary: job.data['salary'] ?? "",
+        status: job.data['status'] ?? "",
+        description: job.data['description'] ?? "",
+        options: job.data['options'] ?? "",
+        type: job.data['type'] ?? "");
+  }
 }
 
 // List<Jobs> jobData = [
