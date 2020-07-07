@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:we_work/screens/applications.dart';
 import 'package:we_work/screens/home.dart';
 import 'package:we_work/screens/profile.dart';
+import 'package:we_work/screens/saved_jobs.dart';
 import 'package:we_work/utils/colors.dart';
 
 class Dashboard extends StatefulWidget {
@@ -22,7 +23,7 @@ class _DashboardState extends State<Dashboard> {
   final pages = [
     Home(),
     Applications(),
-    Home(),
+    SavedJobs(),
     Profile(),
   ];
 
@@ -31,7 +32,6 @@ class _DashboardState extends State<Dashboard> {
     final height = MediaQuery.of(context).size.height;
     return Scaffold(
       body: pages[currentIndex],
-      // extendBody: true,
       bottomNavigationBar: Container(
         padding: EdgeInsets.all(0),
         height: height / 10,

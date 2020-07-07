@@ -252,9 +252,10 @@ class _JobCardState extends State<JobCard> {
                                 height: screenHeight(context, 0.1),
                                 width: screenWidth(context, 0.18),
                                 child: Center(
-                                  child: Icon(
-                                    Icons.bookmark_border,
+                                  child: IconButton(
+                                    icon: Icon(Icons.bookmark_border),
                                     color: UiColors.color2,
+                                    onPressed: () => saveJobHandler(user),
                                   ),
                                 ),
                                 decoration: BoxDecoration(
@@ -298,6 +299,15 @@ class _JobCardState extends State<JobCard> {
   applicationHandler(User user) {
     if (widget.status == "open") {
       new Queries().addApplication(user.uid, widget.jobRef);
+    } else {
+      return null;
+    }
+  }
+
+  saveJobHandler(User user) {
+    print("HELLO");
+    if (widget.status == "open") {
+      new Queries().saveJob(user.uid, widget.jobRef);
     } else {
       return null;
     }
