@@ -24,6 +24,7 @@ class Queries {
     return result;
   }
 
+//Checks if the current user reference and the job he is trying to apply to has a reference in the database
   Future<QuerySnapshot> checkApplicationExist(
       String uid, DocumentReference jobRef) async {
     return applications
@@ -32,6 +33,7 @@ class Queries {
         .getDocuments();
   }
 
+//Checks if the current user reference and the job he is trying to bookmark to has a reference in the database
   Future<QuerySnapshot> checkSavedExist(
       String uid, DocumentReference jobRef) async {
     return saved
@@ -44,6 +46,7 @@ class Queries {
     try {
       QuerySnapshot applicationExist = await checkApplicationExist(uid, jobRef);
 
+//Checks if the user has already applied to the job
       if (applicationExist.documents.length <= 0) {
         var result = await _firestore.collection('applications').add({
           'uref': user.document(uid),
@@ -66,6 +69,7 @@ class Queries {
   Future saveJob(String uid, DocumentReference jobRef) async {
     try {
       QuerySnapshot checkSaved = await checkSavedExist(uid, jobRef);
+      //Checks if the user has already bookmarked the job
       if (checkSaved.documents.length <= 0) {
         var result = await _firestore.collection('saved_jobs').add({
           'uref': user.document(uid),
