@@ -8,6 +8,7 @@ class Queries {
   final CollectionReference profile = _firestore.collection("profile");
   final CollectionReference applications =
       _firestore.collection("applications");
+  final CollectionReference saved = _firestore.collection("saved_jobs");
 
   Future<void> createprofile(_uid, _name, _email, _phone, _experience,
       _githublink, _resume, _applications) async {
@@ -23,14 +24,27 @@ class Queries {
     return result;
   }
 
-  Future<DocumentSnapshot> checkDocumentExist(DocumentReference jobRef) async {
-    return await (jobRef).get();
+  Future<QuerySnapshot> checkApplicationExist(
+      String uid, DocumentReference jobRef) async {
+    return applications
+        .where('uref', isEqualTo: user.document(uid))
+        .where('jobref', isEqualTo: jobRef)
+        .getDocuments();
+  }
+
+  Future<QuerySnapshot> checkSavedExist(
+      String uid, DocumentReference jobRef) async {
+    return saved
+        .where('uref', isEqualTo: user.document(uid))
+        .where('jobref', isEqualTo: jobRef)
+        .getDocuments();
   }
 
   Future addApplication(String uid, DocumentReference jobRef) async {
     try {
-      DocumentSnapshot checkJobExist = await checkDocumentExist(jobRef);
-      if (checkJobExist == null || !checkJobExist.exists) {
+      QuerySnapshot applicationExist = await checkApplicationExist(uid, jobRef);
+
+      if (applicationExist.documents.length <= 0) {
         var result = await _firestore.collection('applications').add({
           'uref': user.document(uid),
           'jobref': jobRef,
@@ -40,6 +54,7 @@ class Queries {
         return result;
       } else {
         print("Application exists");
+        print(applicationExist.documents.length);
       }
     } on PlatformException catch (e) {
       print(
@@ -50,14 +65,16 @@ class Queries {
 
   Future saveJob(String uid, DocumentReference jobRef) async {
     try {
-      DocumentSnapshot checkJobExist = await checkDocumentExist(jobRef);
-      if (checkJobExist == null || !checkJobExist.exists) {
+      QuerySnapshot checkSaved = await checkSavedExist(uid, jobRef);
+      if (checkSaved.documents.length <= 0) {
         var result = await _firestore.collection('saved_jobs').add({
           'uref': user.document(uid),
           'jobref': jobRef,
           'save_date': FieldValue.serverTimestamp(),
         });
         return result;
+      } else {
+        print("Job already saved");
       }
     } on PlatformException catch (e) {
       print(

@@ -253,7 +253,7 @@ class _JobCardState extends State<JobCard> {
                                 width: screenWidth(context, 0.18),
                                 child: Center(
                                   child: IconButton(
-                                    icon: Icon(Icons.bookmark_border),
+                                    icon: Icon(Icons.bookmark),
                                     color: UiColors.color2,
                                     onPressed: () => saveJobHandler(user),
                                   ),
@@ -305,12 +305,7 @@ class _JobCardState extends State<JobCard> {
   }
 
   saveJobHandler(User user) {
-    print("HELLO");
-    if (widget.status == "open") {
-      new Queries().saveJob(user.uid, widget.jobRef);
-    } else {
-      return null;
-    }
+    new Queries().saveJob(user.uid, widget.jobRef);
   }
 }
 
