@@ -297,24 +297,48 @@ class _JobCardState extends State<JobCard> {
                               Container(
                                 width: screenWidth(context, 0.7),
                                 height: screenHeight(context, 0.1),
-                                child: RaisedButton(
-                                  onPressed: () => applicationHandler(user),
-                                  child: Text(
-                                    widget.status == 'open'
-                                        ? applicationText
-                                        : 'Closed',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 20.0,
-                                        color: Colors.white),
-                                  ),
-                                  color: widget.status == 'open'
-                                      ? UiColors.color2
-                                      : Colors.red,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                ),
+                                child: FutureBuilder<Stream<QuerySnapshot>>(
+                                    future: queries.checkApplicationExist(
+                                        user.uid, widget.jobRef),
+                                    builder: (context, snapshot) {
+                                      return StreamBuilder<QuerySnapshot>(
+                                          stream: snapshot?.data,
+                                          builder: (context, snapshot) {
+                                            int applicationLen = snapshot
+                                                ?.data?.documents?.length;
+                                            if (snapshot.hasData) {
+                                              return RaisedButton(
+                                                onPressed: () =>
+                                                    applicationHandler(
+                                                        applicationLen, user),
+                                                child: Text(
+                                                  widget.status == 'open'
+                                                      ? applicationLen <= 0
+                                                          ? "Apply"
+                                                          : "Applied"
+                                                      : 'Closed',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 20.0,
+                                                      color: Colors.white),
+                                                ),
+                                                color: widget.status == 'open'
+                                                    ? applicationLen <= 0
+                                                        ? UiColors.color2
+                                                        : Color.fromRGBO(
+                                                            15, 171, 188, 1)
+                                                    : Colors.red,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                ),
+                                              );
+                                            } else {
+                                              return Center(child: Text("..."));
+                                            }
+                                          });
+                                    }),
                               ),
                             ],
                           ),
@@ -327,11 +351,15 @@ class _JobCardState extends State<JobCard> {
             ));
   }
 
-  applicationHandler(User user) {
-    if (widget.status == "open") {
-      new Queries().addApplication(user.uid, widget.jobRef);
-    } else {
+  applicationHandler(int checkAppliedLen, User user) {
+    if (checkAppliedLen > 0) {
+      print("Already applied");
       return null;
+    } else if (widget.status != "open") {
+      print("Application closed");
+      return null;
+    } else {
+      queries.addApplication(user.uid, widget.jobRef);
     }
   }
 }

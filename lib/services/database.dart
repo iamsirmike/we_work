@@ -25,12 +25,12 @@ class Queries {
   }
 
 //Checks if the current user reference and the job he is trying to apply to has a reference in the database
-  Future<QuerySnapshot> checkApplicationExist(
+  Future<Stream<QuerySnapshot>> checkApplicationExist(
       String uid, DocumentReference jobRef) async {
     return applications
         .where('uref', isEqualTo: user.document(uid))
         .where('jobref', isEqualTo: jobRef)
-        .getDocuments();
+        .snapshots();
   }
 
 //Checks if the current user reference and the job he is trying to bookmark to has a reference in the database
@@ -44,20 +44,12 @@ class Queries {
 
   Future addApplication(String uid, DocumentReference jobRef) async {
     try {
-      QuerySnapshot applicationExist = await checkApplicationExist(uid, jobRef);
-
-//Checks if the user has already applied to the job
-      if (applicationExist.documents.length <= 0) {
-        var result = await _firestore.collection('applications').add({
-          'uref': user.document(uid),
-          'jobref': jobRef,
-          'apply_date': FieldValue.serverTimestamp(),
-          'pending': true,
-        });
-        return result;
-      } else {
-        return null;
-      }
+      _firestore.collection('applications').add({
+        'uref': user.document(uid),
+        'jobref': jobRef,
+        'apply_date': FieldValue.serverTimestamp(),
+        'pending': true,
+      }).then((value) => print("Application submitted"));
     } on PlatformException catch (e) {
       print(
           "ADD APPLICATION 2   <<<<<<================= ${e.message} ===============>>>>>>");
@@ -95,7 +87,7 @@ class Queries {
           .then((value) => print("Job unsaved..."));
     } on PlatformException catch (e) {
       print(
-          "ADD APPLICATION 2   <<<<<<================= ${e.message} ===============>>>>>>");
+          "UNSAVE JOB EXCEPTION   <<<<<<================= ${e.message} ===============>>>>>>");
       return e.message;
     }
   }
