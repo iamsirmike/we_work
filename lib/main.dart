@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:we_work/providers/jobs_provider.dart';
 import 'package:we_work/screens/all_jobs.dart';
 import 'package:we_work/screens/resetpassword..dart';
 import 'package:we_work/screens/signin_screen.dart';
@@ -14,11 +15,15 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return StreamProvider<User>.value(
-      value: Auth().onAuthStateChanged,
+    return MultiProvider(
+      providers: [
+        StreamProvider<User>.value(value: Auth().onAuthStateChanged),
+        ChangeNotifierProvider<JobsProvider>(
+          create: (context) => JobsProvider(),
+        )
+      ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',

@@ -34,12 +34,12 @@ class Queries {
   }
 
 //Checks if the current user reference and the job he is trying to bookmark to has a reference in the database
-  Future<QuerySnapshot> checkSavedExist(
+  Future<Stream<QuerySnapshot>> checkSavedExist(
       String uid, DocumentReference jobRef) async {
     return saved
         .where('uref', isEqualTo: user.document(uid))
         .where('jobref', isEqualTo: jobRef)
-        .getDocuments();
+        .snapshots();
   }
 
   Future addApplication(String uid, DocumentReference jobRef) async {
@@ -56,8 +56,7 @@ class Queries {
         });
         return result;
       } else {
-        print("Application exists");
-        print(applicationExist.documents.length);
+        return null;
       }
     } on PlatformException catch (e) {
       print(
@@ -68,18 +67,32 @@ class Queries {
 
   Future saveJob(String uid, DocumentReference jobRef) async {
     try {
-      QuerySnapshot checkSaved = await checkSavedExist(uid, jobRef);
-      //Checks if the user has already bookmarked the job
-      if (checkSaved.documents.length <= 0) {
-        var result = await _firestore.collection('saved_jobs').add({
-          'uref': user.document(uid),
-          'jobref': jobRef,
-          'save_date': FieldValue.serverTimestamp(),
-        });
-        return result;
-      } else {
-        print("Job already saved");
-      }
+      return _firestore
+          .collection('saved_jobs')
+          .add({
+            'uref': user.document(uid),
+            'jobref': jobRef,
+            'save_date': FieldValue.serverTimestamp(),
+          })
+          .then((value) => print("Job saved"))
+          .catchError((onError) => throw new PlatformException(
+              code: onError.code, message: onError.message));
+    } on PlatformException catch (e) {
+      print(
+          "SAVE JOB FAILED   <<<<<<================= ${e.message} ===============>>>>>>");
+      return e.message;
+    }
+  }
+
+  Future unSaveJob(String uid, DocumentReference jobRef) async {
+    try {
+      QuerySnapshot savedJob = await saved
+          .where('uref', isEqualTo: user.document(uid))
+          .where('jobref', isEqualTo: jobRef)
+          .getDocuments();
+      savedJob.documents[0].reference
+          .delete()
+          .then((value) => print("Job unsaved..."));
     } on PlatformException catch (e) {
       print(
           "ADD APPLICATION 2   <<<<<<================= ${e.message} ===============>>>>>>");
