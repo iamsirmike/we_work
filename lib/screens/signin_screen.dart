@@ -119,6 +119,9 @@ class _SignInState extends State<SignIn> {
                           ),
                         ),
                         child: TextFormField(
+                          autocorrect: false,
+                          enableSuggestions: false,
+                          keyboardType: TextInputType.text,
                           controller: _passwordcontroller,
                           validator: (_pass) {
                             if ((_pass.isEmpty) || !(_pass.length > 6)) {
@@ -127,7 +130,6 @@ class _SignInState extends State<SignIn> {
                             return null;
                           },
                           obscureText: _isPasswordMasked,
-                          keyboardType: TextInputType.emailAddress,
                           style: TextStyle(color: Colors.grey[500]),
                           decoration: textInputDecoration(
                               labelText: 'Password',
