@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:we_work/models/job_model.dart';
-import 'package:we_work/services/auth.dart';
 
 class FetchJobs {
   final CollectionReference jobs = Firestore.instance.collection("jobs");

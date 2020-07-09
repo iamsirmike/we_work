@@ -35,6 +35,14 @@ class JobCard extends StatefulWidget {
 
 class _JobCardState extends State<JobCard> {
   String applicationText = "Apply";
+  JobsProvider jobsProvider;
+  Queries queries = new Queries();
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    jobsProvider = Provider.of<JobsProvider>(context, listen: false);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +50,7 @@ class _JobCardState extends State<JobCard> {
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: GestureDetector(
         onTap: () {
-          buildShowModalBottomSheet(context);
+          buildShowModalBottomSheet();
         },
         child: Container(
           height: screenHeight(context, 0.15),
@@ -133,7 +141,7 @@ class _JobCardState extends State<JobCard> {
     );
   }
 
-  buildShowModalBottomSheet(BuildContext context) {
+  buildShowModalBottomSheet() {
     final user = Provider.of<User>(context, listen: false);
     return showModalBottomSheet(
         isScrollControlled: true,
@@ -252,12 +260,35 @@ class _JobCardState extends State<JobCard> {
                                 height: screenHeight(context, 0.1),
                                 width: screenWidth(context, 0.18),
                                 child: Center(
-                                  child: IconButton(
-                                    icon: Icon(Icons.bookmark_border),
-                                    color: UiColors.color2,
-                                    onPressed: () => saveJobHandler(user),
-                                  ),
-                                ),
+                                    child: FutureBuilder<Stream<QuerySnapshot>>(
+                                        future: queries.checkSavedExist(
+                                            user.uid, widget.jobRef),
+                                        builder: (context, snapshot) {
+                                          return StreamBuilder<QuerySnapshot>(
+                                              stream: snapshot?.data,
+                                              builder: (context, snapshot) {
+                                                if (snapshot.hasData) {
+                                                  int count = snapshot
+                                                      ?.data?.documents?.length;
+                                                  return IconButton(
+                                                    icon: Icon((count <= 0)
+                                                        ? Icons.bookmark_border
+                                                        : Icons.bookmark),
+                                                    color: UiColors.color2,
+                                                    onPressed: () => (count <=
+                                                            0)
+                                                        ? jobsProvider.saveJob(
+                                                            user, widget.jobRef)
+                                                        : queries.unSaveJob(
+                                                            user.uid,
+                                                            widget.jobRef),
+                                                  );
+                                                } else {
+                                                  return Icon(
+                                                      Icons.bookmark_border);
+                                                }
+                                              });
+                                        })),
                                 decoration: BoxDecoration(
                                   color: UiColors.color1,
                                   borderRadius: BorderRadius.circular(20),
@@ -299,15 +330,6 @@ class _JobCardState extends State<JobCard> {
   applicationHandler(User user) {
     if (widget.status == "open") {
       new Queries().addApplication(user.uid, widget.jobRef);
-    } else {
-      return null;
-    }
-  }
-
-  saveJobHandler(User user) {
-    print("HELLO");
-    if (widget.status == "open") {
-      new Queries().saveJob(user.uid, widget.jobRef);
     } else {
       return null;
     }
