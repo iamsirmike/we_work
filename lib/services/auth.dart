@@ -11,12 +11,15 @@ class User {
 
   User({@required this.uid});
 
-  Future saveUser() async {
+  Future saveUser(String email) async {
     try {
-      print(uid);
       return await users
           .document(uid)
-          .setData({'active': true, 'date_join': FieldValue.serverTimestamp()})
+          .setData({
+            'email': email,
+            'active': true,
+            'date_join': FieldValue.serverTimestamp()
+          })
           .then((value) => true)
           .catchError((error) => throw new Exception(error));
     } catch (e) {
@@ -71,7 +74,7 @@ class Auth {
       return await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: pass)
           .then((value) {
-        new User(uid: value.user.uid).saveUser();
+        new User(uid: value.user.uid).saveUser(email);
         return _userFromFirebase(value.user);
       }).catchError((onError) => throw new PlatformException(
               code: onError.code, message: onError.message));
@@ -112,7 +115,7 @@ class Auth {
             accessToken: googleAuth.accessToken,
           ),
         );
-        new User(uid: authResult.user.uid).saveUser();
+        new User(uid: authResult.user.uid).saveUser(authResult.user.email);
         return _userFromFirebase(authResult.user);
       } else {
         throw PlatformException(

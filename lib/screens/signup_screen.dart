@@ -124,7 +124,8 @@ class _SignUpState extends State<SignUp> {
                           controller: _passwordcontroller,
                           validator: (_pass) {
                             if ((_pass.isEmpty) || !(_pass.length > 5)) {
-                              return 'Password must be more than 6';
+                              // You made it more 6 but but the app was accepting 6
+                              return 'Password must be more than 5 characters';
                             }
                             return null;
                           },
