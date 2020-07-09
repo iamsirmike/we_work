@@ -8,6 +8,7 @@ class Queries {
   final CollectionReference profile = _firestore.collection("profile");
   final CollectionReference applications =
       _firestore.collection("applications");
+  final CollectionReference saved = _firestore.collection("saved_jobs");
 
   Future<void> createprofile(_uid, _name, _email, _phone, _experience,
       _githublink, _resume, _applications) async {
@@ -23,14 +24,30 @@ class Queries {
     return result;
   }
 
-  Future<DocumentSnapshot> checkDocumentExist(DocumentReference jobRef) async {
-    return await (jobRef).get();
+//Checks if the current user reference and the job he is trying to apply to has a reference in the database
+  Future<QuerySnapshot> checkApplicationExist(
+      String uid, DocumentReference jobRef) async {
+    return applications
+        .where('uref', isEqualTo: user.document(uid))
+        .where('jobref', isEqualTo: jobRef)
+        .getDocuments();
+  }
+
+//Checks if the current user reference and the job he is trying to bookmark to has a reference in the database
+  Future<Stream<QuerySnapshot>> checkSavedExist(
+      String uid, DocumentReference jobRef) async {
+    return saved
+        .where('uref', isEqualTo: user.document(uid))
+        .where('jobref', isEqualTo: jobRef)
+        .snapshots();
   }
 
   Future addApplication(String uid, DocumentReference jobRef) async {
     try {
-      DocumentSnapshot checkJobExist = await checkDocumentExist(jobRef);
-      if (checkJobExist == null || !checkJobExist.exists) {
+      QuerySnapshot applicationExist = await checkApplicationExist(uid, jobRef);
+
+//Checks if the user has already applied to the job
+      if (applicationExist.documents.length <= 0) {
         var result = await _firestore.collection('applications').add({
           'uref': user.document(uid),
           'jobref': jobRef,
@@ -39,7 +56,7 @@ class Queries {
         });
         return result;
       } else {
-        print("Application exists");
+        return null;
       }
     } on PlatformException catch (e) {
       print(
@@ -50,15 +67,32 @@ class Queries {
 
   Future saveJob(String uid, DocumentReference jobRef) async {
     try {
-      DocumentSnapshot checkJobExist = await checkDocumentExist(jobRef);
-      if (checkJobExist == null || !checkJobExist.exists) {
-        var result = await _firestore.collection('saved_jobs').add({
-          'uref': user.document(uid),
-          'jobref': jobRef,
-          'save_date': FieldValue.serverTimestamp(),
-        });
-        return result;
-      }
+      return _firestore
+          .collection('saved_jobs')
+          .add({
+            'uref': user.document(uid),
+            'jobref': jobRef,
+            'save_date': FieldValue.serverTimestamp(),
+          })
+          .then((value) => print("Job saved"))
+          .catchError((onError) => throw new PlatformException(
+              code: onError.code, message: onError.message));
+    } on PlatformException catch (e) {
+      print(
+          "SAVE JOB FAILED   <<<<<<================= ${e.message} ===============>>>>>>");
+      return e.message;
+    }
+  }
+
+  Future unSaveJob(String uid, DocumentReference jobRef) async {
+    try {
+      QuerySnapshot savedJob = await saved
+          .where('uref', isEqualTo: user.document(uid))
+          .where('jobref', isEqualTo: jobRef)
+          .getDocuments();
+      savedJob.documents[0].reference
+          .delete()
+          .then((value) => print("Job unsaved..."));
     } on PlatformException catch (e) {
       print(
           "ADD APPLICATION 2   <<<<<<================= ${e.message} ===============>>>>>>");

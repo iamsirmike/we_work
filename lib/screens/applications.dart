@@ -1,9 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:provider/provider.dart';
 import 'package:we_work/models/job_model.dart';
-import 'package:we_work/providers/jobs_provider.dart';
 import 'package:we_work/services/auth.dart';
 import 'package:we_work/services/fetch_jobs.dart';
 import 'package:we_work/utils/colors.dart';
