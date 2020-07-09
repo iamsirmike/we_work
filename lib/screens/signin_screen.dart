@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:we_work/screens/signup_screen.dart';
 import 'package:we_work/services/auth.dart';
 import 'package:we_work/utils/colors.dart';
 import 'package:we_work/utils/responsive.dart';
@@ -195,7 +196,11 @@ class _SignInState extends State<SignIn> {
                         height: screenHeight(context, 0.1),
                         child: RaisedButton(
                           onPressed: () {
-                            Navigator.pushNamed(context, '/signup');
+                            // Navigator.pushNamed(context, '/signup');
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => SignUp()),
+                            );
                           },
                           child: Text(
                             'Create account',
