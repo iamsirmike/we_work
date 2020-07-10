@@ -56,13 +56,11 @@ class _SavedJobsState extends State<SavedJobs> {
               ),
               Expanded(
                 child: Container(
-                  // height: screenHeight(context, 0.734),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Container(
-                        // height: screenHeight(context, 0.09),
                         decoration: BoxDecoration(
                           color: UiColors.color1,
                           borderRadius: BorderRadius.circular(
