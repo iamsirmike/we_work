@@ -24,7 +24,6 @@ class Queries {
     return result;
   }
 
-//Checks if the current user reference and the job he is trying to apply to has a reference in the database
   Future<Stream<QuerySnapshot>> checkApplicationExist(
       String uid, DocumentReference jobRef) async {
     return applications
@@ -33,7 +32,6 @@ class Queries {
         .snapshots();
   }
 
-//Checks if the current user reference and the job he is trying to bookmark to has a reference in the database
   Future<Stream<QuerySnapshot>> checkSavedExist(
       String uid, DocumentReference jobRef) async {
     return saved

@@ -47,6 +47,9 @@ class _SignInState extends State<SignIn> {
           _loading = false;
           switch (user) {
             case "ERROR_USER_NOT_FOUND":
+              _scaffoldKey.currentState
+                  .showSnackBar(snackBar("This user does not exist"));
+              break;
             case "ERROR_WRONG_PASSWORD":
               _scaffoldKey.currentState
                   .showSnackBar(snackBar("Email or password is incorrect"));
@@ -124,8 +127,8 @@ class _SignInState extends State<SignIn> {
                           keyboardType: TextInputType.text,
                           controller: _passwordcontroller,
                           validator: (_pass) {
-                            if ((_pass.isEmpty) || !(_pass.length > 6)) {
-                              return 'Password must be more than 6 characters';
+                            if ((_pass.isEmpty)) {
+                              return 'Enter password';
                             }
                             return null;
                           },
