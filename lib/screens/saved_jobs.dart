@@ -1,9 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:provider/provider.dart';
 import 'package:we_work/models/job_model.dart';
-import 'package:we_work/providers/jobs_provider.dart';
 import 'package:we_work/services/auth.dart';
 import 'package:we_work/services/fetch_jobs.dart';
 import 'package:we_work/utils/colors.dart';
@@ -30,75 +28,80 @@ class _SavedJobsState extends State<SavedJobs> {
       backgroundColor: UiColors.bg,
       body: ModalProgressHUD(
         inAsyncCall: _loading,
-        child: ListView(
-          children: [
-            SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              children: [
+                Row(
                   children: [
-                    Row(
+                    Icon(
+                      Icons.sort,
+                      size: 25.0,
+                      color: UiColors.color2,
+                    ),
+                    Spacer(),
+                    GestureDetector(
+                      onTap: () {
+                        auth.signOut();
+                      },
+                      child: Icon(
+                        Icons.notifications_none,
+                        size: 25.0,
+                        color: UiColors.color2,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: screenHeight(context, 0.02),
+                ),
+                Expanded(
+                  child: Container(
+                    // height: screenHeight(context, 0.734),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Icon(
-                          Icons.sort,
-                          size: 25.0,
-                          color: UiColors.color2,
-                        ),
-                        Spacer(),
-                        GestureDetector(
-                          onTap: () {
-                            auth.signOut();
-                          },
-                          child: Icon(
-                            Icons.notifications_none,
-                            size: 25.0,
-                            color: UiColors.color2,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: screenHeight(context, 0.02),
-                    ),
-                    Container(
-                      height: screenHeight(context, 0.734),
-                      child: ListView(
-                        children: [
-                          Container(
-                            height: screenHeight(context, 0.09),
-                            decoration: BoxDecoration(
-                              color: UiColors.color1,
-                              borderRadius: BorderRadius.circular(
-                                25,
-                              ),
+                        Container(
+                          // height: screenHeight(context, 0.09),
+                          decoration: BoxDecoration(
+                            color: UiColors.color1,
+                            borderRadius: BorderRadius.circular(
+                              25,
                             ),
-                            child: TextField(
-                              decoration: textInputDecoration(
-                                hintText: 'Search jobs',
-                                sicon: IconButton(
-                                  icon: Icon(Icons.search),
-                                  onPressed: () {},
-                                ),
+                          ),
+                          child: TextField(
+                            decoration: textInputDecoration(
+                              hintText: 'Search jobs',
+                              sicon: IconButton(
+                                icon: Icon(Icons.search),
+                                onPressed: () {
+                                  print("Searching...");
+                                },
                               ),
                             ),
                           ),
-                          SizedBox(
-                            height: screenHeight(context, 0.04),
-                          ),
-                          Row(
-                            children: [
-                              Text(
-                                'Saved Jobs',
-                                style: TextStyle(
-                                    color: UiColors.color2,
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 20.0),
-                              ),
-                              Spacer(),
-                            ],
-                          ),
-                          Container(
-                              height: screenHeight(context, 1),
+                        ),
+                        SizedBox(
+                          height: screenHeight(context, 0.04),
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              'Saved Jobs',
+                              style: TextStyle(
+                                  color: UiColors.color2,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 20.0),
+                            ),
+                            Spacer(),
+                          ],
+                        ),
+                        Expanded(
+                          child: Container(
+                              // height: screenHeight(context, 1),
+                              // color: Colors.red,
                               child: StreamBuilder<List<Stream<Jobs>>>(
                                   stream: fetchJobs.savedJobsStream,
                                   builder: (context, snapshot) {
@@ -116,8 +119,17 @@ class _SavedJobsState extends State<SavedJobs> {
                                         ),
                                       );
                                     }
-
                                     List jobs = snapshot.data;
+                                    if (jobs.length <= 0) {
+                                      return Center(
+                                          child: Text(
+                                        "No data available",
+                                        style: TextStyle(
+                                            color: Color.fromRGBO(
+                                                204, 204, 204, 1),
+                                            fontWeight: FontWeight.bold),
+                                      ));
+                                    }
                                     return ListView.builder(
                                       physics: NeverScrollableScrollPhysics(),
                                       itemCount: jobs.length,
@@ -157,15 +169,15 @@ class _SavedJobsState extends State<SavedJobs> {
                                             });
                                       },
                                     );
-                                  }))
-                        ],
-                      ),
+                                  })),
+                        )
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

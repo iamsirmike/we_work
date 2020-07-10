@@ -54,21 +54,6 @@ class Auth {
     return _userFromFirebase(authResult.user);
   }
 
-  // Future<User> signupwithemail(email, pass) async {
-  //   final authResult = await FirebaseAuth.instance
-  //       .createUserWithEmailAndPassword(email: email, password: pass);
-  //   authResult.user.sendEmailVerification();
-  //   return _userFromFirebase(authResult.user);
-  // }
-
-  // Future<User> signinwithemail(email, pass) async {
-  //   final authResult =
-  //       await _auth.signInWithEmailAndPassword(email: email, password: pass);
-  //   if (authResult.user.isEmailVerified)
-  //     return _userFromFirebase(authResult.user);
-  //   return null;
-  // }
-
   Future<dynamic> signupwithemail(email, pass) async {
     try {
       return await FirebaseAuth.instance
@@ -83,9 +68,6 @@ class Auth {
     }
   }
 
-/* Made some few changes here
-  Returns dynamic so that i can return the firebase exceptions if any is thrown
- */
   Future<dynamic> signinwithemail(email, pass) async {
     try {
       return await _auth
