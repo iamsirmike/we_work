@@ -407,26 +407,26 @@ class _SignUpState extends State<SignUp> {
                 // SizedBox(
                 //   height: screenHeight(context, 0.08),
                 // ),
-                // GestureDetector(
-                //   onTap: () {
-                //     Navigator.pop(context);
-                //   },
-                //   child: RichText(
-                //     text: TextSpan(
-                //       text: 'I haave an account ',
-                //       style: TextStyle(color: Colors.grey[400]),
-                //       children: <TextSpan>[
-                //         TextSpan(
-                //           text: 'Sign In',
-                //           style: TextStyle(
-                //               color: UiColors.color2,
-                //               fontWeight: FontWeight.bold,
-                //               fontSize: 17.0),
-                //         ),
-                //       ],
-                //     ),
-                //   ),
-                // )
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: RichText(
+                    text: TextSpan(
+                      text: 'I haave an account ',
+                      style: TextStyle(color: Colors.grey[400]),
+                      children: <TextSpan>[
+                        TextSpan(
+                          text: 'Sign In',
+                          style: TextStyle(
+                              color: UiColors.color2,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 17.0),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
               ],
             ),
           ),
