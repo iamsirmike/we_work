@@ -29,7 +29,7 @@ class _SignUpState extends State<SignUp> {
   final TextEditingController _githubcontroller = TextEditingController();
   final TextEditingController _resumecontroller = TextEditingController();
   String _applications;
-  String _uid;
+  // String _uid;
 
   String get _email => _emailcontroller.text;
   String get _pass => _passwordcontroller.text;
@@ -132,7 +132,7 @@ class _SignUpState extends State<SignUp> {
 
   List<Step> get steps => [
         Step(
-          title: Text('Step 1'),
+          title: Text('Account'),
           isActive: currentStep == 0 ? true : false,
           state: StepState.editing,
           content: Column(
@@ -231,7 +231,7 @@ class _SignUpState extends State<SignUp> {
         Step(
           isActive: currentStep == 1 ? true : false,
           state: StepState.complete,
-          title: const Text('Step 2'),
+          title: const Text('Profile'),
           content: Form(
             key: _formKey,
             child: Column(
@@ -333,7 +333,7 @@ class _SignUpState extends State<SignUp> {
         inAsyncCall: _loading,
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 50.0),
+            padding: const EdgeInsets.symmetric(vertical: 30.0),
             child: Column(
               children: [
                 Text(
@@ -343,7 +343,7 @@ class _SignUpState extends State<SignUp> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: 10),
                 Expanded(
                   child: Stepper(
                     controlsBuilder: (BuildContext context,
