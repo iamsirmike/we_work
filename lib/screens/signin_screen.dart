@@ -39,7 +39,7 @@ class _SignInState extends State<SignIn> {
       });
       print(_email);
       print(_pass);
-      dynamic user = await auth.signinwithemail(_email.trim(), _pass.trim());
+      dynamic user = await auth.signinwithemail(_email.trim(), _pass);
 
       if (user.runtimeType != User) {
         print(user);

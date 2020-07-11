@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -7,25 +6,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 //create a user class and constructor
 class User {
   final String uid;
-  CollectionReference users = Firestore.instance.collection("users");
-
   User({@required this.uid});
-
-  Future saveUser(String email) async {
-    try {
-      return await users
-          .document(uid)
-          .setData({
-            'email': email,
-            'active': true,
-            'date_join': FieldValue.serverTimestamp()
-          })
-          .then((value) => true)
-          .catchError((error) => throw new Exception(error));
-    } catch (e) {
-      print(e);
-    }
-  }
 }
 
 // hook the Auth class to the abstract class
@@ -58,10 +39,8 @@ class Auth {
     try {
       return await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: pass)
-          .then((value) {
-        new User(uid: value.user.uid).saveUser(email);
-        return _userFromFirebase(value.user);
-      }).catchError((onError) => throw new PlatformException(
+          .then((value) => _userFromFirebase(value.user))
+          .catchError((onError) => throw new PlatformException(
               code: onError.code, message: onError.message));
     } on PlatformException catch (e) {
       return e.code;
@@ -97,7 +76,7 @@ class Auth {
             accessToken: googleAuth.accessToken,
           ),
         );
-        new User(uid: authResult.user.uid).saveUser(authResult.user.email);
+
         return _userFromFirebase(authResult.user);
       } else {
         throw PlatformException(
