@@ -88,18 +88,12 @@ class _SignUpState extends State<SignUp> {
       );
 
   //save profile data
-  Future<void> _save() async {
+  Future<void> _save(String uid) async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-      setState(() {
-        _loading = true;
-      });
       try {
-        await queries.createprofile(_uid, _name, _email, _phone,
+        await queries.createprofile(uid, _name, _email, _phone,
             _selectedexperience, _github, _resume, _applications);
-        setState(() {
-          _loading = false;
-        });
       } catch (e) {
         print(e.toString());
       }
@@ -109,15 +103,13 @@ class _SignUpState extends State<SignUp> {
   Future<void> signUp() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-
       setState(() {
         _loading = true;
       });
-      dynamic user = await auth.signupwithemail(_email.trim(), _pass.trim());
-      _save(); // save userData into profile
+      dynamic user = await auth.signupwithemail(_email.trim(), _pass);
+
       print(user);
       if (user.runtimeType != User) {
-        // print(user);
         setState(() {
           _loading = false;
           switch (user) {
@@ -131,7 +123,8 @@ class _SignUpState extends State<SignUp> {
           }
         });
       } else {
-        //For some reason the stream doesn't change the page automatically so i had to force it there...
+        // I am calling this here because, the user has to be saved before the profile is created, if we call it at the top, the profile will be created even if the signup fails
+        _save(user.uid); // save userData into profile
         Navigator.pushReplacementNamed(context, '/dashboard');
       }
     }
@@ -350,7 +343,7 @@ class _SignUpState extends State<SignUp> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-         SizedBox(height: 20),
+                SizedBox(height: 20),
                 Expanded(
                   child: Stepper(
                     controlsBuilder: (BuildContext context,

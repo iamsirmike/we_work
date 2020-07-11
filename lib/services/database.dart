@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 final _firestore = Firestore.instance;
 
 class Queries {
-  final CollectionReference user = _firestore.collection("users");
   final CollectionReference profile = _firestore.collection("profile");
   final CollectionReference applications =
       _firestore.collection("applications");
@@ -12,14 +11,15 @@ class Queries {
 
   Future<void> createprofile(_uid, _name, _email, _phone, _experience,
       _githublink, _resume, _applications) async {
-    var result = await _firestore.collection('profile').add({
+    var result = await _firestore.collection('profile').document(_uid).setData({
       'name': _name,
-      'uref': user.document(_uid),
       'email': _email,
       'phone': _phone,
       'experience': _experience,
       'githublink': _githublink,
       'resume': _resume,
+      'active': true,
+      'date_created': FieldValue.serverTimestamp()
     });
     return result;
   }
@@ -27,7 +27,7 @@ class Queries {
   Future<Stream<QuerySnapshot>> checkApplicationExist(
       String uid, DocumentReference jobRef) async {
     return applications
-        .where('uref', isEqualTo: user.document(uid))
+        .where('profile_ref', isEqualTo: profile.document(uid))
         .where('jobref', isEqualTo: jobRef)
         .snapshots();
   }
@@ -35,7 +35,7 @@ class Queries {
   Future<Stream<QuerySnapshot>> checkSavedExist(
       String uid, DocumentReference jobRef) async {
     return saved
-        .where('uref', isEqualTo: user.document(uid))
+        .where('profile_ref', isEqualTo: profile.document(uid))
         .where('jobref', isEqualTo: jobRef)
         .snapshots();
   }
@@ -43,10 +43,10 @@ class Queries {
   Future addApplication(String uid, DocumentReference jobRef) async {
     try {
       _firestore.collection('applications').add({
-        'uref': user.document(uid),
+        'profile_ref': profile.document(uid),
         'jobref': jobRef,
         'apply_date': FieldValue.serverTimestamp(),
-        'pending': true,
+        'status': 'pending',
       }).then((value) => print("Application submitted"));
     } on PlatformException catch (e) {
       print(
@@ -60,7 +60,7 @@ class Queries {
       return _firestore
           .collection('saved_jobs')
           .add({
-            'uref': user.document(uid),
+            'profile_ref': profile.document(uid),
             'jobref': jobRef,
             'save_date': FieldValue.serverTimestamp(),
           })
@@ -77,7 +77,7 @@ class Queries {
   Future unSaveJob(String uid, DocumentReference jobRef) async {
     try {
       QuerySnapshot savedJob = await saved
-          .where('uref', isEqualTo: user.document(uid))
+          .where('profile_ref', isEqualTo: profile.document(uid))
           .where('jobref', isEqualTo: jobRef)
           .getDocuments();
       savedJob.documents[0].reference

@@ -6,13 +6,13 @@ import 'package:we_work/models/job_model.dart';
 
 class FetchJobs {
   final CollectionReference jobs = Firestore.instance.collection("jobs");
-  final CollectionReference user = Firestore.instance.collection("users");
+  final CollectionReference profiles = Firestore.instance.collection("profile");
   final CollectionReference applications =
       Firestore.instance.collection('applications');
   final CollectionReference savedJobs =
       Firestore.instance.collection('saved_jobs');
 
-  StreamSubscription<String> _data;
+  // StreamSubscription<String> _data;
   Completer<String> completer = Completer();
 
   String _uid;
@@ -33,7 +33,7 @@ class FetchJobs {
 //APPLICATIONS
   Stream<List<Stream<Jobs>>> get applicationsStream {
     return applications
-        .where('uref', isEqualTo: user.document(_uid))
+        .where('profile_ref', isEqualTo: profiles.document(_uid))
         .snapshots()
         .map(_applicationList);
   }
@@ -48,7 +48,7 @@ class FetchJobs {
 //SAVED JOBS
   Stream<List<Stream<Jobs>>> get savedJobsStream {
     return savedJobs
-        .where('uref', isEqualTo: user.document(_uid))
+        .where('profile_ref', isEqualTo: profiles.document(_uid))
         .snapshots()
         .map(_savedJobsList);
   }
