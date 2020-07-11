@@ -114,7 +114,7 @@ class _SignUpState extends State<SignUp> {
         _loading = true;
       });
       dynamic user = await auth.signupwithemail(_email.trim(), _pass.trim());
-      _save();
+      _save(); // save userData into profile
       print(user);
       if (user.runtimeType != User) {
         // print(user);
