@@ -350,7 +350,7 @@ class _SignUpState extends State<SignUp> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-
+         SizedBox(height: 20),
                 Expanded(
                   child: Stepper(
                     controlsBuilder: (BuildContext context,
