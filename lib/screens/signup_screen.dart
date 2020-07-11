@@ -52,7 +52,16 @@ class _SignUpState extends State<SignUp> {
   }
 
   goTo(int step) {
-    setState(() => currentStep = step);
+    if (_formKey.currentState.validate()) {
+      _formKey.currentState.save();
+      setState(() {
+        _loading = true;
+      });
+      setState(() => currentStep = step);
+      setState(() {
+        _loading = false;
+      });
+    }
   }
 
   void passwordunmask() {
@@ -71,6 +80,61 @@ class _SignUpState extends State<SignUp> {
       dropdownItems.add(newItem);
     }
     return dropdownItems;
+  }
+
+  Widget snackBar(message) => SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+      );
+
+  //save profile data
+  Future<void> _save() async {
+    if (_formKey.currentState.validate()) {
+      _formKey.currentState.save();
+      setState(() {
+        _loading = true;
+      });
+      try {
+        await queries.createprofile(_uid, _name, _email, _phone,
+            _selectedexperience, _github, _resume, _applications);
+        setState(() {
+          _loading = false;
+        });
+      } catch (e) {
+        print(e.toString());
+      }
+    }
+  }
+
+  Future<void> signUp() async {
+    if (_formKey.currentState.validate()) {
+      _formKey.currentState.save();
+
+      setState(() {
+        _loading = true;
+      });
+      dynamic user = await auth.signupwithemail(_email.trim(), _pass.trim());
+      _save();
+      print(user);
+      if (user.runtimeType != User) {
+        // print(user);
+        setState(() {
+          _loading = false;
+          switch (user) {
+            case "ERROR_EMAIL_ALREADY_IN_USE":
+              _scaffoldKey.currentState
+                  .showSnackBar(snackBar("User already exists"));
+              break;
+            default:
+              _scaffoldKey.currentState.showSnackBar(
+                  snackBar("An unknown error occured, please try again"));
+          }
+        });
+      } else {
+        //For some reason the stream doesn't change the page automatically so i had to force it there...
+        Navigator.pushReplacementNamed(context, '/dashboard');
+      }
+    }
   }
 
   List<Step> get steps => [
@@ -267,61 +331,6 @@ class _SignUpState extends State<SignUp> {
           ),
         ),
       ];
-
-  Widget snackBar(message) => SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
-      );
-
-  //save profile data
-  Future<void> _save() async {
-    if (_formKey.currentState.validate()) {
-      _formKey.currentState.save();
-      setState(() {
-        _loading = true;
-      });
-      try {
-        await queries.createprofile(_uid, _name, _email, _phone,
-            _selectedexperience, _github, _resume, _applications);
-        setState(() {
-          _loading = false;
-        });
-      } catch (e) {
-        print(e.toString());
-      }
-    }
-  }
-
-  Future<void> signUp() async {
-    if (_formKey.currentState.validate()) {
-      _formKey.currentState.save();
-
-      setState(() {
-        _loading = true;
-      });
-      dynamic user = await auth.signupwithemail(_email.trim(), _pass.trim());
-      _save();
-      print(user);
-      if (user.runtimeType != User) {
-        // print(user);
-        setState(() {
-          _loading = false;
-          switch (user) {
-            case "ERROR_EMAIL_ALREADY_IN_USE":
-              _scaffoldKey.currentState
-                  .showSnackBar(snackBar("User already exists"));
-              break;
-            default:
-              _scaffoldKey.currentState.showSnackBar(
-                  snackBar("An unknown error occured, please try again"));
-          }
-        });
-      } else {
-        //For some reason the stream doesn't change the page automatically so i had to force it there...
-        Navigator.pushReplacementNamed(context, '/dashboard');
-      }
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
