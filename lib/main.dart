@@ -5,6 +5,7 @@ import 'package:we_work/screens/all_jobs.dart';
 import 'package:we_work/screens/resetpassword..dart';
 import 'package:we_work/screens/signin_screen.dart';
 import 'package:we_work/screens/signup_screen.dart';
+import 'package:we_work/screens/splash_screen.dart';
 import 'package:we_work/screens/wrapper.dart';
 import 'package:we_work/screens/dashboard.dart';
 import 'package:we_work/services/auth.dart';
@@ -28,11 +29,11 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
         theme: ThemeData(
-          primarySwatch: Colors.grey,
+          primarySwatch: Colors.blue,
           visualDensity: VisualDensity.adaptivePlatformDensity,
           appBarTheme: AppBarTheme(color: UiColors.bg),
         ),
-        home: Wrapper(),
+        home: Splash(),
         routes: {
           '/alljobs': (context) => AllJobs(),
           '/dashboard': (context) => Dashboard(),
