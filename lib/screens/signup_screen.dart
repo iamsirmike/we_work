@@ -29,7 +29,7 @@ class _SignUpState extends State<SignUp> {
   final TextEditingController _githubcontroller = TextEditingController();
   final TextEditingController _resumecontroller = TextEditingController();
   String _applications;
-  String _uid;
+  // String _uid;
 
   String get _email => _emailcontroller.text;
   String get _pass => _passwordcontroller.text;
@@ -88,18 +88,12 @@ class _SignUpState extends State<SignUp> {
       );
 
   //save profile data
-  Future<void> _save() async {
+  Future<void> _save(String uid) async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-      setState(() {
-        _loading = true;
-      });
       try {
-        await queries.createprofile(_uid, _name, _email, _phone,
+        await queries.createprofile(uid, _name, _email, _phone,
             _selectedexperience, _github, _resume, _applications);
-        setState(() {
-          _loading = false;
-        });
       } catch (e) {
         print(e.toString());
       }
@@ -109,15 +103,13 @@ class _SignUpState extends State<SignUp> {
   Future<void> signUp() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-
       setState(() {
         _loading = true;
       });
-      dynamic user = await auth.signupwithemail(_email.trim(), _pass.trim());
-      _save();
+      dynamic user = await auth.signupwithemail(_email.trim(), _pass);
+
       print(user);
       if (user.runtimeType != User) {
-        // print(user);
         setState(() {
           _loading = false;
           switch (user) {
@@ -131,7 +123,8 @@ class _SignUpState extends State<SignUp> {
           }
         });
       } else {
-        //For some reason the stream doesn't change the page automatically so i had to force it there...
+        // I am calling this here because, the user has to be saved before the profile is created, if we call it at the top, the profile will be created even if the signup fails
+        _save(user.uid); // save userData into profile
         Navigator.pushReplacementNamed(context, '/dashboard');
       }
     }
@@ -139,7 +132,7 @@ class _SignUpState extends State<SignUp> {
 
   List<Step> get steps => [
         Step(
-          title: Text('Step 1'),
+          title: Text('Account'),
           isActive: currentStep == 0 ? true : false,
           state: StepState.editing,
           content: Column(
@@ -238,7 +231,7 @@ class _SignUpState extends State<SignUp> {
         Step(
           isActive: currentStep == 1 ? true : false,
           state: StepState.complete,
-          title: const Text('Step 2'),
+          title: const Text('Profile'),
           content: Form(
             key: _formKey,
             child: Column(
@@ -340,7 +333,7 @@ class _SignUpState extends State<SignUp> {
         inAsyncCall: _loading,
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 50.0),
+            padding: const EdgeInsets.symmetric(vertical: 30.0),
             child: Column(
               children: [
                 Text(
@@ -350,7 +343,7 @@ class _SignUpState extends State<SignUp> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-
+                SizedBox(height: 10),
                 Expanded(
                   child: Stepper(
                     controlsBuilder: (BuildContext context,
