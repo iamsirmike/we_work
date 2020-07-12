@@ -30,7 +30,6 @@ class _SignUpState extends State<SignUp> {
   final TextEditingController _phonecontroller = TextEditingController();
   final TextEditingController _githubcontroller = TextEditingController();
   final TextEditingController _resumecontroller = TextEditingController();
-  String _applications;
   // String _uid;
 
   String get _email => _emailcontroller.text;
@@ -94,8 +93,8 @@ class _SignUpState extends State<SignUp> {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
       try {
-        await queries.createprofile(uid, _name, _email, _phone,
-            _selectedexperience, _github, _resume, _applications);
+        await queries.createprofile(
+            uid, _name, _email, _phone, _selectedexperience, _github, _resume);
       } catch (e) {
         print(e.toString());
       }

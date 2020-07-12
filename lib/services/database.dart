@@ -9,8 +9,8 @@ class Queries {
       _firestore.collection("applications");
   final CollectionReference saved = _firestore.collection("saved_jobs");
 
-  Future<void> createprofile(_uid, _name, _email, _phone, _experience,
-      _githublink, _resume, _applications) async {
+  Future<void> createprofile(
+      _uid, _name, _email, _phone, _experience, _githublink, _resume) async {
     var result = await _firestore.collection('profile').document(_uid).setData({
       'name': _name,
       'email': _email,
@@ -22,6 +22,29 @@ class Queries {
       'date_created': FieldValue.serverTimestamp()
     });
     return result;
+  }
+
+  Future updataProfile(String uid, String _name, String _email, String _phone,
+      String _experience, String _githublink, String _resume) async {
+    try {
+      await Firestore.instance
+          .collection("profile")
+          .document(uid)
+          .updateData({
+            'name': _name,
+            'email': _email,
+            'phone': _phone,
+            'experience': _experience,
+            'githublink': _githublink,
+            'resume': _resume,
+          })
+          .then((value) => true)
+          .catchError((error) => throw new PlatformException(
+              code: "UPADATE_FAILED", message: "Unable to update"));
+      return true;
+    } on PlatformException catch (e) {
+      return e.code;
+    }
   }
 
   Future<Stream<QuerySnapshot>> checkApplicationExist(
