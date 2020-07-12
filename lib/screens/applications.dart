@@ -66,7 +66,7 @@ class _ApplicationsState extends State<Applications> {
                           decoration: BoxDecoration(
                             color: UiColors.color1,
                             borderRadius: BorderRadius.circular(
-                              25,
+                              10,
                             ),
                           ),
                           child: TextField(
