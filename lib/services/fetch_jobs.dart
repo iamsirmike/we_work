@@ -12,9 +12,6 @@ class FetchJobs {
   final CollectionReference savedJobs =
       Firestore.instance.collection('saved_jobs');
 
-  // StreamSubscription<String> _data;
-  Completer<String> completer = Completer();
-
   String _uid;
 
   set setUid(String uid) {
