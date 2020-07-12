@@ -14,6 +14,8 @@ class SignUp extends StatefulWidget {
   _SignUpState createState() => _SignUpState();
 }
 
+const List<String> experiences = ['Senior', 'Mid-senior', 'Junior'];
+
 class _SignUpState extends State<SignUp> {
   final _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();

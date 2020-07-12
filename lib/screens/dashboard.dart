@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:we_work/screens/applications.dart';
 import 'package:we_work/screens/home.dart';
 import 'package:we_work/screens/profile.dart';
+// import 'package:we_work/screens/profile.dart';
 import 'package:we_work/screens/saved_jobs.dart';
 import 'package:we_work/utils/colors.dart';
 
@@ -11,7 +12,7 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  int currentIndex = 0;
+  int currentIndex = 3;
 
   final bottomItems = [
     {'icon': Icon(Icons.home), "text": "Jobs"},

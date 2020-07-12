@@ -5,7 +5,6 @@ import 'package:we_work/services/auth.dart';
 import 'package:we_work/services/database.dart';
 import 'package:we_work/services/fetch_profile.dart';
 import 'package:we_work/utils/colors.dart';
-import 'package:we_work/utils/responsive.dart';
 import 'package:we_work/widgets/input_decoration.dart';
 import 'package:we_work/models/profile_model.dart';
 
@@ -28,6 +27,16 @@ class _ProfileState extends State<Profile> {
     fetchProfile.setUid = _user.uid;
   }
 
+  //toggle enabling textfields
+  bool enabled = false;
+  bool enableDropDown = true;
+  void enableFields() {
+    setState(() {
+      enabled = !enabled;
+      enableDropDown = !enableDropDown;
+    });
+  }
+
   final _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   Queries queries = Queries();
@@ -38,8 +47,6 @@ class _ProfileState extends State<Profile> {
   TextEditingController _phone = TextEditingController();
   TextEditingController _github = TextEditingController();
   TextEditingController _resume = TextEditingController();
-  // var _uid;
-  String _applications;
 
   // <-- drop downmenu for experience -->
   String _selectedexperience = 'Senior';
@@ -53,70 +60,50 @@ class _ProfileState extends State<Profile> {
     return dropdownItems;
   }
 
-  //get current user
-  // Future<void> getCurrentUser() async {
-  //   setState(() async {
-  //     var loggedInUser = await auth.getcurrentUser();
-  //     _uid = loggedInUser.uid;
-  //     // print(_uid);
-  //   });
-  // }
-
-//save profile data
-  // Future<void> _save() async {
-  //   if (_formKey.currentState.validate()) {
-  //     _formKey.currentState.save();
-  //     setState(() {
-  //       _loading = true;
-  //     });
-  //     try {
-  //       await queries.createprofile(_uid, _name.text, _email.text, _phone.text,
-  //           _selectedexperience, _github.text, _resume.text, _applications);
-  //       setState(() {
-  //         _loading = false;
-  //       });
-  //     } catch (e) {
-  //       print(e.toString());
-  //     }
-  //   }
-  // }
-
 //logout
   Future<void> _logout() async {
     await auth.signOut();
   }
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   getCurrentUser();
-  // }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: UiColors.bg,
-      appBar: AppBar(
-        title: Text(
-          'Create profile',
-        ),
-        actions: [
-          IconButton(
-              icon: Icon(
-                Icons.power_settings_new,
-                color: Colors.red,
-              ),
-              onPressed: _logout)
-        ],
-      ),
       body: SafeArea(
         child: ModalProgressHUD(
           inAsyncCall: _loading,
           child: ListView(
             children: [
               Padding(
-                padding: const EdgeInsets.all(15.0),
+                padding: const EdgeInsets.all(10.0),
+                child: GestureDetector(
+                  onTap: _logout,
+                  child: Container(
+                    alignment: Alignment.bottomRight,
+                    child: Text(
+                      'Sign Out',
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10.0),
+                child: GestureDetector(
+                  onTap: enableFields,
+                  child: CircleAvatar(
+                    child: Icon(enabled ? Icons.done : Icons.edit),
+                  ),
+                ),
+              ),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 7.0, horizontal: 15),
                 child: StreamBuilder<ProfileModel>(
                     stream: fetchProfile.profileStream,
                     builder: (context, snapshot) {
@@ -146,6 +133,7 @@ class _ProfileState extends State<Profile> {
                                 ),
                               ),
                               child: TextFormField(
+                                enabled: enabled,
                                 controller: _name,
                                 validator: (_name) {
                                   if ((_name.isEmpty)) {
@@ -167,7 +155,9 @@ class _ProfileState extends State<Profile> {
                                 ),
                               ),
                               child: TextFormField(
+                                // initialValue: profile.email,
                                 controller: _email,
+                                enabled: enabled,
                                 validator: (_email) {
                                   if ((_email.isEmpty)) {
                                     return 'Please enter a valid email';
@@ -175,8 +165,10 @@ class _ProfileState extends State<Profile> {
                                   return null;
                                 },
                                 decoration: textInputDecoration(
-                                    // hintText: 'Your Email Address'
-                                    hintText: profile.email),
+                                  // hintText: 'Your Email Address'
+                                  hintText: profile.email,
+                                  // labelText: 'Email'
+                                ),
                               ),
                             ),
                             TextboxSeperator(),
@@ -188,6 +180,7 @@ class _ProfileState extends State<Profile> {
                                 ),
                               ),
                               child: TextFormField(
+                                enabled: enabled,
                                 controller: _phone,
                                 validator: (_phone) {
                                   if ((_phone.isEmpty) ||
@@ -210,6 +203,7 @@ class _ProfileState extends State<Profile> {
                                 ),
                               ),
                               child: TextFormField(
+                                enabled: enabled,
                                 controller: _github,
                                 validator: (_github) {
                                   if ((_github.isEmpty)) {
@@ -235,19 +229,24 @@ class _ProfileState extends State<Profile> {
                               child: Padding(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 0.0),
-                                child: DropdownButtonFormField(
-                                  // underline: SizedBox(),
-                                  hint: Text('Work Experience'),
-                                  decoration: textInputDecoration(
-                                      hintText: 'Experience'),
-                                  // value: _selectedexperience,
-                                  value: profile.experience,
-                                  items: getDRopDownItems(),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _selectedexperience = value;
-                                    });
-                                  },
+                                child: IgnorePointer(
+                                  ignoring: enableDropDown,
+                                  child: DropdownButtonFormField(
+                                    iconEnabledColor: enableDropDown
+                                        ? UiColors.color5
+                                        : Colors.black,
+                                    hint: Text('Work Experience'),
+                                    decoration: textInputDecoration(
+                                        hintText: 'Experience'),
+                                    value: profile.experience,
+                                    style: TextStyle(color: UiColors.color5),
+                                    items: getDRopDownItems(),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _selectedexperience = value;
+                                      });
+                                    },
+                                  ),
                                 ),
                               ),
                             ),
@@ -260,6 +259,7 @@ class _ProfileState extends State<Profile> {
                                 ),
                               ),
                               child: TextFormField(
+                                enabled: enabled,
                                 controller: _resume,
                                 validator: (_resume) {
                                   if ((_resume.isEmpty)) {
@@ -272,24 +272,24 @@ class _ProfileState extends State<Profile> {
                                     hintText: profile.resume),
                               ),
                             ),
-                            SizedBox(height: 20),
-                            Container(
-                              width: screenWidth(context, 1),
-                              height: screenHeight(context, 0.1),
-                              child: RaisedButton(
-                                onPressed: () {},
-                                child: Text(
-                                  'Save',
-                                  style: TextStyle(
-                                      color: UiColors.color1,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                color: UiColors.color2,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                            ),
+                            // SizedBox(height: 20),
+                            // Container(
+                            //   width: screenWidth(context, 1),
+                            //   height: screenHeight(context, 0.1),
+                            //   child: RaisedButton(
+                            //     onPressed: () {},
+                            //     child: Text(
+                            //       'Save',
+                            //       style: TextStyle(
+                            //           color: UiColors.color1,
+                            //           fontWeight: FontWeight.bold),
+                            //     ),
+                            //     color: UiColors.color2,
+                            //     shape: RoundedRectangleBorder(
+                            //       borderRadius: BorderRadius.circular(10),
+                            //     ),
+                            //   ),
+                            // ),
                           ],
                         ),
                       );
