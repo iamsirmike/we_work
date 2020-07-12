@@ -1,3 +1,4 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:provider/provider.dart';
@@ -5,6 +6,7 @@ import 'package:we_work/services/auth.dart';
 import 'package:we_work/services/database.dart';
 import 'package:we_work/services/fetch_profile.dart';
 import 'package:we_work/utils/colors.dart';
+import 'package:we_work/utils/responsive.dart';
 import 'package:we_work/widgets/input_decoration.dart';
 import 'package:we_work/models/profile_model.dart';
 
@@ -18,6 +20,17 @@ const List<String> experiences = ['Senior', 'Mid-senior', 'Junior'];
 class _ProfileState extends State<Profile> {
   FetcProfile fetchProfile = new FetcProfile();
   User _user;
+  final _formKey = GlobalKey<FormState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  Queries queries = Queries();
+  Auth auth = Auth();
+  bool _loading = false;
+  String _name;
+  String _email;
+  String _phone;
+  String _github;
+  String _resume;
+  Color fieldColor = Color.fromRGBO(200, 200, 200, 1);
 
   @override
   void initState() {
@@ -34,19 +47,9 @@ class _ProfileState extends State<Profile> {
     setState(() {
       enabled = !enabled;
       enableDropDown = !enableDropDown;
+      // _formKey.currentState.reset();
     });
   }
-
-  final _formKey = GlobalKey<FormState>();
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  Queries queries = Queries();
-  Auth auth = Auth();
-  bool _loading = false;
-  TextEditingController _name = TextEditingController();
-  TextEditingController _email = TextEditingController();
-  TextEditingController _phone = TextEditingController();
-  TextEditingController _github = TextEditingController();
-  TextEditingController _resume = TextEditingController();
 
   // <-- drop downmenu for experience -->
   String _selectedexperience = 'Senior';
@@ -108,7 +111,7 @@ class _ProfileState extends State<Profile> {
                     stream: fetchProfile.profileStream,
                     builder: (context, snapshot) {
                       if (!snapshot.hasData) {
-                        print(snapshot.error);
+                        // print(snapshot.error);
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 120.0),
                           child: Container(
@@ -133,11 +136,15 @@ class _ProfileState extends State<Profile> {
                                 ),
                               ),
                               child: TextFormField(
+                                style: TextStyle(
+                                    color:
+                                        !enabled ? fieldColor : Colors.black),
+                                initialValue: profile.fullName,
                                 enabled: enabled,
-                                controller: _name,
-                                validator: (_name) {
-                                  if ((_name.isEmpty)) {
-                                    return 'Please enter your full name';
+                                onSaved: (name) => _name = name,
+                                validator: (name) {
+                                  if ((name.isEmpty)) {
+                                    return 'This field cannot be empty';
                                   }
                                   return null;
                                 },
@@ -155,19 +162,22 @@ class _ProfileState extends State<Profile> {
                                 ),
                               ),
                               child: TextFormField(
-                                // initialValue: profile.email,
-                                controller: _email,
+                                style: TextStyle(
+                                    color:
+                                        !enabled ? fieldColor : Colors.black),
+                                initialValue: profile.email,
+                                onSaved: (email) => _email = email,
                                 enabled: enabled,
-                                validator: (_email) {
-                                  if ((_email.isEmpty)) {
+                                validator: (email) {
+                                  if ((email.isEmpty) ||
+                                      (!EmailValidator.validate(
+                                          email.trim()))) {
                                     return 'Please enter a valid email';
                                   }
                                   return null;
                                 },
                                 decoration: textInputDecoration(
-                                  // hintText: 'Your Email Address'
                                   hintText: profile.email,
-                                  // labelText: 'Email'
                                 ),
                               ),
                             ),
@@ -180,11 +190,15 @@ class _ProfileState extends State<Profile> {
                                 ),
                               ),
                               child: TextFormField(
+                                style: TextStyle(
+                                    color:
+                                        !enabled ? fieldColor : Colors.black),
+                                initialValue: profile.phone,
                                 enabled: enabled,
-                                controller: _phone,
-                                validator: (_phone) {
-                                  if ((_phone.isEmpty) ||
-                                      !(_phone.length > 9)) {
+                                onSaved: (phone) => _phone = phone,
+                                keyboardType: TextInputType.number,
+                                validator: (phone) {
+                                  if ((phone.isEmpty) || !(phone.length > 9)) {
                                     return 'Please enter a valid phone number';
                                   }
                                   return null;
@@ -203,17 +217,20 @@ class _ProfileState extends State<Profile> {
                                 ),
                               ),
                               child: TextFormField(
+                                style: TextStyle(
+                                    color:
+                                        !enabled ? fieldColor : Colors.black),
+                                initialValue: profile.github,
                                 enabled: enabled,
-                                controller: _github,
-                                validator: (_github) {
-                                  if ((_github.isEmpty)) {
-                                    return 'Please enter a valid email';
+                                onSaved: (github) => _github = github,
+                                validator: (github) {
+                                  if ((github.isEmpty) ||
+                                      !(Uri.parse(github).isAbsolute)) {
+                                    return 'Enter a valid url';
                                   }
                                   return null;
                                 },
                                 decoration: textInputDecoration(
-                                    // hintText:
-                                    // 'Github / LinkedIn / Portfolio Link'
                                     hintText: profile.github),
                               ),
                             ),
@@ -259,11 +276,16 @@ class _ProfileState extends State<Profile> {
                                 ),
                               ),
                               child: TextFormField(
+                                style: TextStyle(
+                                    color:
+                                        !enabled ? fieldColor : Colors.black),
+                                initialValue: profile.resume,
                                 enabled: enabled,
-                                controller: _resume,
-                                validator: (_resume) {
-                                  if ((_resume.isEmpty)) {
-                                    return 'Please enter a valid email';
+                                onSaved: (resume) => _resume = resume,
+                                validator: (resume) {
+                                  if ((resume.isEmpty) ||
+                                      !(Uri.parse(resume).isAbsolute)) {
+                                    return 'Enter a valid url';
                                   }
                                   return null;
                                 },
@@ -272,24 +294,27 @@ class _ProfileState extends State<Profile> {
                                     hintText: profile.resume),
                               ),
                             ),
-                            // SizedBox(height: 20),
-                            // Container(
-                            //   width: screenWidth(context, 1),
-                            //   height: screenHeight(context, 0.1),
-                            //   child: RaisedButton(
-                            //     onPressed: () {},
-                            //     child: Text(
-                            //       'Save',
-                            //       style: TextStyle(
-                            //           color: UiColors.color1,
-                            //           fontWeight: FontWeight.bold),
-                            //     ),
-                            //     color: UiColors.color2,
-                            //     shape: RoundedRectangleBorder(
-                            //       borderRadius: BorderRadius.circular(10),
-                            //     ),
-                            //   ),
-                            // ),
+                            SizedBox(height: 20),
+                            Visibility(
+                              visible: enabled,
+                              child: Container(
+                                width: screenWidth(context, 1),
+                                height: screenHeight(context, 0.1),
+                                child: RaisedButton(
+                                  onPressed: updateProfile,
+                                  child: Text(
+                                    'Save',
+                                    style: TextStyle(
+                                        color: UiColors.color1,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  color: UiColors.color2,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       );
@@ -300,6 +325,39 @@ class _ProfileState extends State<Profile> {
         ),
       ),
     );
+  }
+
+  final snackBar = (Color bg, String message) => SnackBar(
+      backgroundColor: bg,
+      content: Text(
+        message,
+      ));
+
+  Future updateProfile() async {
+    if (_formKey.currentState.validate()) {
+      _formKey.currentState.save();
+      dynamic updateResult = await queries.updataProfile(
+          _user.uid,
+          _name.trim(),
+          _email.trim(),
+          _phone.trim(),
+          _selectedexperience,
+          _github.trim(),
+          _resume.trim());
+
+      if (updateResult == true) {
+        Scaffold.of(context).showSnackBar(
+            snackBar(Color.fromRGBO(82, 222, 151, 1), 'Update successful'));
+        setState(() {
+          enabled = false;
+          enableDropDown = false;
+        });
+      } else {
+        Scaffold.of(context).showSnackBar(snackBar(
+            Color.fromRGBO(253, 94, 83, 1),
+            'An error occured, please try again'));
+      }
+    }
   }
 }
 
