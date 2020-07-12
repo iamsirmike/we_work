@@ -303,7 +303,7 @@ class _ProfileState extends State<Profile> {
                                 child: RaisedButton(
                                   onPressed: updateProfile,
                                   child: Text(
-                                    'Save',
+                                    'Update',
                                     style: TextStyle(
                                         color: UiColors.color1,
                                         fontWeight: FontWeight.bold),
