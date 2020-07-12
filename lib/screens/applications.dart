@@ -126,7 +126,7 @@ class _ApplicationsState extends State<Applications> {
                                       ));
                                     }
                                     return ListView.builder(
-                                      physics: NeverScrollableScrollPhysics(),
+                                      // physics: NeverScrollableScrollPhysics(),
                                       itemCount: jobs.length,
                                       itemBuilder: (context, index) {
                                         return StreamBuilder<Jobs>(
