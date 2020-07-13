@@ -1,3 +1,4 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
@@ -172,7 +173,8 @@ class _SignUpState extends State<SignUp> {
                       child: TextFormField(
                         controller: _emailcontroller,
                         validator: (_email) {
-                          if (!regex.hasMatch(_email)) {
+                          if (!regex.hasMatch(_email) ||
+                              !EmailValidator.validate(_email)) {
                             return 'Please enter a valid email';
                           }
                           return null;
@@ -245,6 +247,7 @@ class _SignUpState extends State<SignUp> {
                     ),
                   ),
                   child: TextFormField(
+                    keyboardType: TextInputType.number,
                     controller: _phonecontroller,
                     validator: (_phone) {
                       if ((_phone.isEmpty) || !(_phone.length > 9)) {
@@ -267,7 +270,8 @@ class _SignUpState extends State<SignUp> {
                   child: TextFormField(
                     controller: _githubcontroller,
                     validator: (_github) {
-                      if ((_github.isEmpty)) {
+                      if ((_github.isEmpty) ||
+                          (!Uri.parse(_github).isAbsolute)) {
                         return 'Please enter a valid url';
                       }
                       return null;
@@ -312,7 +316,8 @@ class _SignUpState extends State<SignUp> {
                   child: TextFormField(
                     controller: _resumecontroller,
                     validator: (_resume) {
-                      if ((_resume.isEmpty)) {
+                      if ((_resume.isEmpty) ||
+                          (!Uri.parse(_resume).isAbsolute)) {
                         return 'Please enter a valid url';
                       }
                       return null;
