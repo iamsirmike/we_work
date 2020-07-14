@@ -272,7 +272,7 @@ class _SignUpState extends State<SignUp> {
                     validator: (_github) {
                       if ((_github.isEmpty) ||
                           (!Uri.parse(_github).isAbsolute)) {
-                        return 'Please enter a valid url';
+                        return 'Url should start with http:// or https://';
                       }
                       return null;
                     },
@@ -318,7 +318,7 @@ class _SignUpState extends State<SignUp> {
                     validator: (_resume) {
                       if ((_resume.isEmpty) ||
                           (!Uri.parse(_resume).isAbsolute)) {
-                        return 'Please enter a valid url';
+                        return 'Url should start with http:// or https://';
                       }
                       return null;
                     },
