@@ -51,6 +51,8 @@ class _JobCardState extends State<JobCard> {
       child: GestureDetector(
         onTap: () {
           buildShowModalBottomSheet();
+
+          WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
         },
         child: Container(
           height: screenHeight(context, 0.15),
