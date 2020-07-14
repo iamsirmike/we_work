@@ -22,38 +22,23 @@ class _SignInState extends State<SignIn> {
   String get _email => _emailcontroller.text;
   String get _pass => _passwordcontroller.text;
 
+  Widget snackBar(message) => SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+      );
+
   Future<void> signIn() async {
+    print("HELLO");
     setState(() {
       _loading = true;
     });
-    try {
-      await auth.signinwithemail(_email, _pass);
+    dynamic user = await auth.signinwithemail(_email, _pass);
+    Scaffold.of(context).showSnackBar(snackBar("message"));
+    print(user);
+    if (user.runtimeType != User) {
       setState(() {
         _loading = false;
       });
-    } catch (error) {
-      var errorMessage = error.message.toString();
-      showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: Text('Sign in failed'),
-              content: Text(
-                'User does not exist, make sure you have typed the correct email and password',
-              ),
-              actions: [
-                FlatButton(
-                    onPressed: () {
-                      setState(() {
-                        _loading = false;
-                      });
-                      Navigator.pop(context);
-                    },
-                    child: Text('OK'))
-              ],
-            );
-          });
-      print(errorMessage);
     }
   }
 

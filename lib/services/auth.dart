@@ -57,10 +57,17 @@ class Auth {
     return _userFromFirebase(authResult.user);
   }
 
-  Future<User> signinwithemail(email, pass) async {
-    final authResult =
-        await _auth.signInWithEmailAndPassword(email: email, password: pass);
-    return _userFromFirebase(authResult.user);
+// Made some few changes here, i need the error code to display appropriate message in the snackbar
+  Future<dynamic> signinwithemail(email, pass) async {
+    try {
+      final authResult = await _auth
+          .signInWithEmailAndPassword(email: email, password: pass)
+          .then((value) => _userFromFirebase(value.user))
+          .catchError((onError) => throw new PlatformException(
+              code: onError.code, message: onError.message));
+    } on PlatformException catch (e) {
+      return e.code;
+    }
   }
 
   Future<void> resetPassword(String email) async {
