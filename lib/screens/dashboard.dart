@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:we_work/screens/all_jobs.dart';
+import 'package:we_work/screens/applications.dart';
 import 'package:we_work/screens/home.dart';
+import 'package:we_work/screens/profile.dart';
+// import 'package:we_work/screens/profile.dart';
+import 'package:we_work/screens/saved_jobs.dart';
 import 'package:we_work/utils/colors.dart';
 
 class Dashboard extends StatefulWidget {
@@ -14,16 +17,15 @@ class _DashboardState extends State<Dashboard> {
   final bottomItems = [
     {'icon': Icon(Icons.home), "text": "Jobs"},
     {"icon": Icon(Icons.edit), "text": "Applications"},
-    {"icon": Icon(Icons.bookmark), "text": "Saved Jobs"},
+    {"icon": Icon(Icons.bookmark), "text": "Bookmarks"},
     {"icon": Icon(Icons.person), "text": "Profile"},
   ];
 
   final pages = [
     Home(),
-    Home(),
-    Home(),
-    Home(),
-    AllJobs(),
+    Applications(),
+    SavedJobs(),
+    Profile(),
   ];
 
   @override
@@ -31,7 +33,6 @@ class _DashboardState extends State<Dashboard> {
     final height = MediaQuery.of(context).size.height;
     return Scaffold(
       body: pages[currentIndex],
-      // extendBody: true,
       bottomNavigationBar: Container(
         padding: EdgeInsets.all(0),
         height: height / 10,
@@ -54,7 +55,7 @@ class _DashboardState extends State<Dashboard> {
                 .asMap()
                 .map((i, icon) {
                   bool active = i == currentIndex;
-                  final color = active ? UiColors.color3 : Colors.grey[500];
+                  final color = active ? UiColors.color2 : UiColors.color5;
                   Widget button;
 
                   button = Column(
