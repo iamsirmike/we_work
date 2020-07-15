@@ -6,7 +6,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 //create a user class and constructor
 class User {
   final String uid;
-
   User({@required this.uid});
 }
 
@@ -36,31 +35,21 @@ class Auth {
     return _userFromFirebase(authResult.user);
   }
 
-  // Future<User> signupwithemail(email, pass) async {
-  //   final authResult = await FirebaseAuth.instance
-  //       .createUserWithEmailAndPassword(email: email, password: pass);
-  //   authResult.user.sendEmailVerification();
-  //   return _userFromFirebase(authResult.user);
-  // }
-
-  // Future<User> signinwithemail(email, pass) async {
-  //   final authResult =
-  //       await _auth.signInWithEmailAndPassword(email: email, password: pass);
-  //   if (authResult.user.isEmailVerified)
-  //     return _userFromFirebase(authResult.user);
-  //   return null;
-  // }
-
-  Future<User> signupwithemail(email, pass) async {
-    final authResult = await FirebaseAuth.instance
-        .createUserWithEmailAndPassword(email: email, password: pass);
-    return _userFromFirebase(authResult.user);
+  Future<dynamic> signupwithemail(email, pass) async {
+    try {
+      return await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: pass)
+          .then((value) => _userFromFirebase(value.user))
+          .catchError((onError) => throw new PlatformException(
+              code: onError.code, message: onError.message));
+    } on PlatformException catch (e) {
+      return e.code;
+    }
   }
 
-// Made some few changes here, i need the error code to display appropriate message in the snackbar
   Future<dynamic> signinwithemail(email, pass) async {
     try {
-      final authResult = await _auth
+      return await _auth
           .signInWithEmailAndPassword(email: email, password: pass)
           .then((value) => _userFromFirebase(value.user))
           .catchError((onError) => throw new PlatformException(
@@ -87,6 +76,7 @@ class Auth {
             accessToken: googleAuth.accessToken,
           ),
         );
+
         return _userFromFirebase(authResult.user);
       } else {
         throw PlatformException(
