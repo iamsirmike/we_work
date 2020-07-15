@@ -122,34 +122,33 @@ class _HomeState extends State<Home> {
                               ),
                             ],
                           ),
-                          //SEARCH HERE
-
-                          searchController.text.isNotEmpty
-                              ? Container(
-                                  child: ListView.builder(
-                                  physics: NeverScrollableScrollPhysics(),
-                                  itemCount: tempSearchStore.length,
-                                  itemBuilder: (context, index) {
-                                    return JobCard(
-                                      // jobRef: tempSearchStore[index].jobRef,
-                                      company: tempSearchStore[index]
-                                          ["company"],
-                                      title: tempSearchStore[index]["title"],
-                                      location: tempSearchStore[index]
-                                          ["location"],
-                                      options: tempSearchStore[index]
-                                          ["options"],
-                                      type: tempSearchStore[index]["type"],
-                                      salary: tempSearchStore[index]["salary"],
-                                      status: tempSearchStore[index]["status"],
-                                      description: tempSearchStore[index]
-                                          ["description"],
-                                    );
-                                  },
-                                ))
-                              : Container(
-                                  height: screenHeight(context, 1),
-                                  child: StreamBuilder<Future<List<Jobs>>>(
+                          Container(
+                            height: screenHeight(context, 1),
+                            child: searchController.text.isNotEmpty
+                                ? ListView.builder(
+                                    physics: NeverScrollableScrollPhysics(),
+                                    itemCount: tempSearchStore.length,
+                                    itemBuilder: (context, index) {
+                                      return JobCard(
+                                        // jobRef: tempSearchStore[index].jobRef,
+                                        company: tempSearchStore[index]
+                                            ["company"],
+                                        title: tempSearchStore[index]["title"],
+                                        location: tempSearchStore[index]
+                                            ["location"],
+                                        options: tempSearchStore[index]
+                                            ["options"],
+                                        type: tempSearchStore[index]["type"],
+                                        salary: tempSearchStore[index]
+                                            ["salary"],
+                                        status: tempSearchStore[index]
+                                            ["status"],
+                                        description: tempSearchStore[index]
+                                            ["description"],
+                                      );
+                                    },
+                                  )
+                                : StreamBuilder<Future<List<Jobs>>>(
                                     stream: new FetchJobs().jobsStream,
                                     builder: (context, snapshot) {
                                       if (!snapshot.hasData) {
@@ -208,7 +207,7 @@ class _HomeState extends State<Home> {
                                           });
                                     },
                                   ),
-                                )
+                          )
                         ],
                       ),
                     ),
