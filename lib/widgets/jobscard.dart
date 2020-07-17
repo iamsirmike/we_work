@@ -18,9 +18,11 @@ class JobCard extends StatefulWidget {
   final String salary;
   final String status;
   final String description;
+  final String email;
 
   JobCard(
       {this.jobRef,
+      this.email,
       this.title,
       this.location,
       this.options,
@@ -145,11 +147,11 @@ class _JobCardState extends State<JobCard> {
 
   buildShowModalBottomSheet() {
     final user = Provider.of<User>(context, listen: false);
-    Future<void> send() async {
+    Future<void> sendEmail() async {
       final Email email = Email(
         body: 'Email body',
         subject: 'Sending from my flutter app',
-        recipients: ['asamoahmichael77@gmail.com'],
+        recipients: [widget.email],
         // cc: ['cc@example.com'],
         // bcc: ['bcc@example.com'],
         // attachmentPaths: ['/path/to/attachment.zip'],
@@ -338,7 +340,7 @@ class _JobCardState extends State<JobCard> {
                                                   applicationHandler(
                                                       applicationLen, user);
                                                   applicationLen <= 0
-                                                      ? send()
+                                                      ? sendEmail()
                                                       : print(
                                                           'nono'); // To Do: Execute this only if user is applying
                                                 },

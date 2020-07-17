@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class Jobs {
   final DocumentReference jobRef;
   final String company;
+  final String email;
   final String title;
   final String location;
   final String options;
@@ -14,6 +15,7 @@ class Jobs {
   Jobs(
       {this.jobRef,
       this.company,
+      this.email,
       this.title,
       this.location,
       this.options,
@@ -24,15 +26,17 @@ class Jobs {
 
   factory Jobs.fromSnapshot(DocumentSnapshot job) {
     return Jobs(
-        jobRef: job.reference,
-        company: job.data['company'] ?? "",
-        title: job.data['title'] ?? "",
-        location: job.data['location'] ?? "",
-        salary: job.data['salary'] ?? "",
-        status: job.data['status'] ?? "",
-        description: job.data['description'] ?? "",
-        options: job.data['options'] ?? "",
-        type: job.data['type'] ?? "");
+      jobRef: job.reference,
+      company: job.data['company'] ?? "",
+      email: job.data['email'] ?? "",
+      title: job.data['title'] ?? "",
+      location: job.data['location'] ?? "",
+      salary: job.data['salary'] ?? "",
+      status: job.data['status'] ?? "",
+      description: job.data['description'] ?? "",
+      options: job.data['options'] ?? "",
+      type: job.data['type'] ?? "",
+    );
   }
 }
 

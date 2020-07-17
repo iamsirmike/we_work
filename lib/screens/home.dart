@@ -135,6 +135,7 @@ class _HomeState extends State<Home> {
                                         jobRef: tempReferences[index],
                                         company: tempSearchStore[index]
                                             ["company"],
+                                        email: tempSearchStore[index]["email"],
                                         title: tempSearchStore[index]["title"],
                                         location: tempSearchStore[index]
                                             ["location"],
@@ -195,6 +196,7 @@ class _HomeState extends State<Home> {
                                                 return JobCard(
                                                   jobRef: job[index].jobRef,
                                                   company: job[index].company,
+                                                  email: job[index].email,
                                                   title: job[index].title,
                                                   location: job[index].location,
                                                   options: job[index].options,
