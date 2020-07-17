@@ -6,6 +6,8 @@ import 'package:we_work/services/auth.dart';
 import 'package:we_work/services/database.dart';
 import 'package:we_work/utils/colors.dart';
 import 'package:we_work/utils/responsive.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
+
 
 class JobCard extends StatefulWidget {
   final DocumentReference jobRef;
@@ -161,7 +163,7 @@ class _JobCardState extends State<JobCard> {
                   ),
                   height: screenHeight(context, 0.92),
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(10, 10, 10, 50),
+                    padding: const EdgeInsets.fromLTRB(10, 10, 10, 20),
                     child: Column(
                       children: [
                         Padding(
@@ -173,7 +175,7 @@ class _JobCardState extends State<JobCard> {
                           ),
                         ),
                         SizedBox(
-                          height: screenHeight(context, 0.04),
+                          height: screenHeight(context, 0.02),
                         ),
                         Container(
                           height: screenHeight(context, 0.1),
@@ -193,7 +195,7 @@ class _JobCardState extends State<JobCard> {
                           ),
                         ),
                         SizedBox(
-                          height: screenHeight(context, 0.03),
+                          height: screenHeight(context, 0.008),
                         ),
                         Text(
                           widget.title,
@@ -203,7 +205,7 @@ class _JobCardState extends State<JobCard> {
                           ),
                         ),
                         SizedBox(
-                          height: screenHeight(context, 0.01),
+                          height: screenHeight(context, 0.007),
                         ),
                         Text(
                           '\$${widget.salary}',
@@ -212,7 +214,7 @@ class _JobCardState extends State<JobCard> {
                               ),
                         ),
                         SizedBox(
-                          height: screenHeight(context, 0.04),
+                          height: screenHeight(context, 0.02),
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -229,7 +231,7 @@ class _JobCardState extends State<JobCard> {
                           ],
                         ),
                         SizedBox(
-                          height: screenHeight(context, 0.04),
+                          height: screenHeight(context, 0.02),
                         ),
                         Container(
                           alignment: Alignment.bottomLeft,
@@ -245,10 +247,13 @@ class _JobCardState extends State<JobCard> {
                         SizedBox(
                           height: screenHeight(context, 0.01),
                         ),
-                        Container(
-                          child: Text(
-                            widget.description,
-                            style: TextStyle(color: Colors.grey[400]),
+                        Expanded(
+                          flex: 5,
+                          child: SingleChildScrollView(
+                            child: Text(
+                              widget.description,
+                              style: TextStyle(color: Colors.grey[400]),
+                            ),
                           ),
                         ),
                         Spacer(),
