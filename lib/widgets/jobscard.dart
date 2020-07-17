@@ -337,7 +337,7 @@ class _JobCardState extends State<JobCard> {
                                                 onPressed: () {
                                                   applicationHandler(
                                                       applicationLen, user);
-                                                  applicationLen > 0
+                                                  applicationLen <= 0
                                                       ? send()
                                                       : print(
                                                           'nono'); // To Do: Execute this only if user is applying
