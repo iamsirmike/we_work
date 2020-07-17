@@ -78,6 +78,22 @@ class Queries {
     }
   }
 
+  Future withDrawAppication(String uid, DocumentReference jobRef) async {
+    try {
+      QuerySnapshot application = await applications
+          .where('profile_ref', isEqualTo: profile.document(uid))
+          .where('jobref', isEqualTo: jobRef)
+          .getDocuments();
+      application.documents[0].reference
+          .delete()
+          .then((value) => print("Application widrawn"));
+    } on PlatformException catch (e) {
+      print(
+          "UNSAVE JOB EXCEPTION   <<<<<<================= ${e.message} ===============>>>>>>");
+      return e.message;
+    }
+  }
+
   Future saveJob(String uid, DocumentReference jobRef) async {
     try {
       return _firestore
