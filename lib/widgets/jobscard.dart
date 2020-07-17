@@ -8,7 +8,6 @@ import 'package:we_work/utils/colors.dart';
 import 'package:we_work/utils/responsive.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 
-
 class JobCard extends StatefulWidget {
   final DocumentReference jobRef;
   final String company;
@@ -146,6 +145,27 @@ class _JobCardState extends State<JobCard> {
 
   buildShowModalBottomSheet() {
     final user = Provider.of<User>(context, listen: false);
+    Future<void> send() async {
+      final Email email = Email(
+        body: 'Email body',
+        subject: 'Sending from my flutter app',
+        recipients: ['asamoahmichael77@gmail.com'],
+        // cc: ['cc@example.com'],
+        // bcc: ['bcc@example.com'],
+        // attachmentPaths: ['/path/to/attachment.zip'],
+        isHTML: false,
+      );
+      String platformResponse;
+
+      try {
+        await FlutterEmailSender.send(email);
+        platformResponse = 'success';
+      } catch (error) {
+        platformResponse = error.toString();
+        print(platformResponse);
+      }
+    }
+
     return showModalBottomSheet(
         isScrollControlled: true,
         context: context,
@@ -314,9 +334,14 @@ class _JobCardState extends State<JobCard> {
                                                 ?.data?.documents?.length;
                                             if (snapshot.hasData) {
                                               return RaisedButton(
-                                                onPressed: () =>
-                                                    applicationHandler(
-                                                        applicationLen, user),
+                                                onPressed: () {
+                                                  applicationHandler(
+                                                      applicationLen, user);
+                                                  applicationLen > 0
+                                                      ? send()
+                                                      : print(
+                                                          'nono'); // To Do: Execute this only if user is applying
+                                                },
                                                 child: Text(
                                                   widget.status == 'open'
                                                       ? applicationLen <= 0

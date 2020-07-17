@@ -6,7 +6,7 @@ import 'package:we_work/screens/resetpassword..dart';
 import 'package:we_work/screens/signin_screen.dart';
 import 'package:we_work/screens/signup_screen.dart';
 import 'package:we_work/screens/splash_screen.dart';
-import 'package:we_work/screens/wrapper.dart';
+// import 'package:we_work/screens/wrapper.dart';
 import 'package:we_work/screens/dashboard.dart';
 import 'package:we_work/services/auth.dart';
 import 'package:we_work/utils/colors.dart';
