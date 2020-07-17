@@ -316,7 +316,7 @@ class _JobCardState extends State<JobCard> {
                                                   widget.status == 'open'
                                                       ? applicationLen <= 0
                                                           ? "Apply"
-                                                          : "Applied"
+                                                          : "Withdraw"
                                                       : 'Closed',
                                                   style: TextStyle(
                                                       fontWeight:
@@ -336,7 +336,22 @@ class _JobCardState extends State<JobCard> {
                                                 ),
                                               );
                                             } else {
-                                              return Center(child: Text("..."));
+                                              return RaisedButton(
+                                                onPressed: null,
+                                                child: Text(
+                                                  'Apply',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 20.0,
+                                                      color: Colors.white),
+                                                ),
+                                                color: UiColors.color2,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                ),
+                                              );
                                             }
                                           });
                                     }),
@@ -355,7 +370,7 @@ class _JobCardState extends State<JobCard> {
   applicationHandler(int checkAppliedLen, User user) {
     if (checkAppliedLen > 0) {
       print("Already applied");
-      return null;
+      queries.withDrawAppication(user.uid, widget.jobRef);
     } else if (widget.status != "open") {
       print("Application closed");
       return null;

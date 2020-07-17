@@ -24,6 +24,8 @@ class _HomeState extends State<Home> {
   Auth auth = Auth();
   List queryResultSet = [];
   List tempSearchStore = [];
+  List tempReferences = [];
+  List references = [];
 
   @override
   void dispose() {
@@ -130,7 +132,7 @@ class _HomeState extends State<Home> {
                                     itemCount: tempSearchStore.length,
                                     itemBuilder: (context, index) {
                                       return JobCard(
-                                        // jobRef: tempSearchStore[index].jobRef,
+                                        jobRef: tempReferences[index],
                                         company: tempSearchStore[index]
                                             ["company"],
                                         title: tempSearchStore[index]["title"],
@@ -227,6 +229,8 @@ class _HomeState extends State<Home> {
         print("DATA CLEARED");
         queryResultSet = [];
         tempSearchStore = [];
+        references = [];
+        tempReferences = [];
       });
       return;
     }
@@ -240,7 +244,9 @@ class _HomeState extends State<Home> {
         } else {
           for (int i = 0; i < snapshot.documents.length; ++i) {
             queryResultSet.add(snapshot.documents[i].data);
+            references.add(snapshot.documents[i].reference);
             setState(() {
+              tempReferences.add(references[i]);
               tempSearchStore.add(queryResultSet[i]);
             });
           }
@@ -248,22 +254,24 @@ class _HomeState extends State<Home> {
       });
     } else {
       tempSearchStore = [];
+      tempReferences = [];
+      print("REFERENCES  ====> ${tempReferences.length}");
+      print("ACTUAL DATA  ====> ${tempSearchStore.length}");
       // print(queryResultSet);
-
-      queryResultSet.forEach((element) {
+      queryResultSet.asMap().forEach((index, element) {
+        print(index);
         if (element['title'].toLowerCase().contains(query.toLowerCase()) ==
             true) {
           if (element['title'].toLowerCase().indexOf(query.toLowerCase()) ==
               0) {
             setState(() {
+              tempReferences.add(references[index]);
               tempSearchStore.add(element);
             });
           }
         }
       });
     }
-    // print(tempSearchStore);
-
     if (tempSearchStore.length == 0 && query.length > 1) {
       setState(() {});
     }
