@@ -8,6 +8,9 @@ import 'package:we_work/utils/colors.dart';
 import 'package:we_work/utils/responsive.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 
+import '../utils/responsive.dart';
+import '../utils/responsive.dart';
+
 class JobCard extends StatefulWidget {
   final DocumentReference jobRef;
   final String company;
@@ -62,17 +65,7 @@ class _JobCardState extends State<JobCard> {
           decoration: BoxDecoration(
             color: UiColors.color1,
             borderRadius: BorderRadius.circular(12),
-            // boxShadow: [
-            //   BoxShadow(
-            //     color: UiColors.color1,
-            //     blurRadius: 1,
-            //     spreadRadius: 2,
-            //     offset: Offset(
-            //       2,
-            //       1,
-            //     ),
-            //   ),
-            // ],
+            
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15.0),
@@ -118,17 +111,26 @@ class _JobCardState extends State<JobCard> {
                       SizedBox(height: 6),
                       Row(
                         children: [
-                          Text(
-                            widget.company,
-                            style: TextStyle(
-                              color: UiColors.color5,
-                              fontWeight: FontWeight.bold,
+                          Container(
+                            width: screenWidth(context, 0.2),
+                            child: Text(
+                      
+                              widget.company,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: UiColors.color5,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                           SizedBox(width: 7),
-                          Text(
-                            '- ${widget.location}',
-                            style: TextStyle(color: UiColors.color5),
+                          Container( 
+                            width: screenWidth(context, 0.25),
+                            child: Text(
+                              '- ${widget.location}',
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(color: UiColors.color5),
+                            ),
                           ),
                         ],
                       ),
